@@ -2,7 +2,7 @@ PlanIt
 ==========
 Provides citizens a mechanism to advertise  events (pick-up sports games, service projects, etc.) taking place in parks and neighborhoods around the Twin Cities.  Also help Parks and Recreation officials and other citizens become aware of park usage and the role of parks in our communities.
 
-Current AppEngine app is (intermittently) deployed at [planit-web.appsot.com](planit-web-appspot.com)
+Current AppEngine app is (intermittently) deployed at [planit-web.appsot.com](https://www.planit-web-appspot.com)
 
 
 How to Use
