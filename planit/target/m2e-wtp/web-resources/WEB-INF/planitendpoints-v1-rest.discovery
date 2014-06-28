@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/NWFaRPHe8mhOPfU-ow2m8_OH398\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/YFkLrEnEHIAxo76RRfOxlGeCIek\"",
  "discoveryVersion": "v1",
  "id": "planitendpoints:v1",
  "name": "planitendpoints",
@@ -85,6 +85,33 @@
   }
  },
  "methods": {
+  "greetByPeriod": {
+   "id": "planitendpoints.greetByPeriod",
+   "path": "greetByPeriod",
+   "httpMethod": "POST",
+   "parameters": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "period": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "name",
+    "period"
+   ],
+   "response": {
+    "$ref": "HelloClass"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "sayHello": {
    "id": "planitendpoints.sayHello",
    "path": "sayHello",
