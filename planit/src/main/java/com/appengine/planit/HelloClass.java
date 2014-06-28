@@ -2,16 +2,28 @@ package com.appengine.planit;
 
 public class HelloClass {
 	
-	private String message = "Hello! Welcome to Planit";
-	private String name = "";
+	private String mMessage = "Hello! Welcome to Planit";
+	private String mName = "";
 	
 	public HelloClass(){
-		this.message = message + "!";
+		mMessage = mMessage + "!";
 	}
 	
 	public HelloClass(String name) {
-		this.name = name;
-		this.message = message + ", " + name + "!";
+		mName = name;
+		mMessage = mMessage + ", " + mName + "!";
+	}
+	
+	public HelloClass(String name, String period) {
+		mMessage = "Good " + period + ", " + name + "!";
+	}
+	
+	public String getMessage() {
+		return mMessage;
+	}
+	
+	public String getName() {
+		return mName;
 	}
 	
 	
