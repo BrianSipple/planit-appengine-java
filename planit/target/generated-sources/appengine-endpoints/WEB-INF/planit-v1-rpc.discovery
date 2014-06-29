@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/S6m7O5_PqpzkiVOLR_I2mjhPqwk\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/pOe7055xrxfWueu8ZKOf8nmgl-w\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -100,9 +100,6 @@
      "format": "int32"
     },
     "displayName": {
-     "type": "string"
-    },
-    "notificationEmail": {
      "type": "string"
     },
     "teeShirtSize": {
