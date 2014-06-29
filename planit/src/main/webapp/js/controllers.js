@@ -90,7 +90,7 @@ planitApp.controllers.controller('MyProfileCtrl',
         $scope.saveProfile = function () {
         	$scope.submitted = true;
         	$scope.loading = true;
-        	gapi.client.planit.saveProfile($scope.profile);
+        	gapi.client.planit.saveProfile($scope.profile)
         		.execute(function (resp) {
         			$scope.$apply(function () {
         				$scope.loading = false;
@@ -266,7 +266,7 @@ planitApp.controllers.controller('CreateEventCtrl',
  * @description
  * A controller used for the Show events page.
  */
-eventApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
+planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
 
     /**
      * Holds the status if the query is being executed.

@@ -13,6 +13,14 @@ How to Contribute
 
 Technology Stack
 ----------------
+
+## Language
+- [Java][1]
+
+## APIs
+- [Google Cloud Endpoints][2]
+- [Google App Engine Maven plugin][3]
+
 * http://leafletjs.com/
 * https://www.twilio.com/
 * http://rubyonrails.org/
@@ -22,3 +30,8 @@ History
 This app was originally ideated at CodeCampMN 2013's hackathon in early November 2013 under the name "TextMyPark".  It was expanded on during Hack For MN in June 2014 with a name change to "PlanIt" 
 
 A development project is underway to build Planit as a full-fledged Web/mobile application that integrates activities and events between citizens and local municipalities, institutions, organizations, etc... anywhere in the world.
+
+
+[1]: http://java.com/en/
+[2]: https://developers.google.com/appengine/docs/java/endpoints/
+[3]: https://developers.google.com/appengine/docs/java/tools/maven

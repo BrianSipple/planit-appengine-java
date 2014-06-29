@@ -13,7 +13,7 @@
  */
 
 var app = angular.module('planitApp',
-	['planitControllers' 'ngRoute', 'ui.bootstra'])
+	['planitControllers', 'ngRoute', 'ui.bootstrap'])
 	.config(['$routeProvider', 
 		function ($routeProvider) {
 			$routeProvider
@@ -50,7 +50,7 @@ var app = angular.module('planitApp',
  * A filter that extracts an array from the specific index.
  *
  */
-app.filter('startFrom', fucntion() {
+app.filter('startFrom', function() {
 	/**
      * Extracts an array from the specific index.
      *

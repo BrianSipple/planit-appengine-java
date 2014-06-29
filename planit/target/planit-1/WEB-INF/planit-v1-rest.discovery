@@ -1,0 +1,168 @@
+{
+ "kind": "discovery#restDescription",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/S6m7O5_PqpzkiVOLR_I2mjhPqwk\"",
+ "discoveryVersion": "v1",
+ "id": "planit:v1",
+ "name": "planit",
+ "version": "v1",
+ "description": "API for the Conference Central Backend application.",
+ "icons": {
+  "x16": "http://www.google.com/images/icons/product/search-16.gif",
+  "x32": "http://www.google.com/images/icons/product/search-32.gif"
+ },
+ "protocol": "rest",
+ "baseUrl": "https://planit-web.appspot.com/_ah/api/planit/v1/",
+ "basePath": "/_ah/api/planit/v1/",
+ "rootUrl": "https://planit-web.appspot.com/_ah/api/",
+ "servicePath": "planit/v1/",
+ "batchPath": "batch",
+ "parameters": {
+  "alt": {
+   "type": "string",
+   "description": "Data format for the response.",
+   "default": "json",
+   "enum": [
+    "json"
+   ],
+   "enumDescriptions": [
+    "Responses with Content-Type of application/json"
+   ],
+   "location": "query"
+  },
+  "fields": {
+   "type": "string",
+   "description": "Selector specifying which fields to include in a partial response.",
+   "location": "query"
+  },
+  "key": {
+   "type": "string",
+   "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+   "location": "query"
+  },
+  "oauth_token": {
+   "type": "string",
+   "description": "OAuth 2.0 token for the current user.",
+   "location": "query"
+  },
+  "prettyPrint": {
+   "type": "boolean",
+   "description": "Returns response with indentations and line breaks.",
+   "default": "true",
+   "location": "query"
+  },
+  "quotaUser": {
+   "type": "string",
+   "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters. Overrides userIp if both are provided.",
+   "location": "query"
+  },
+  "userIp": {
+   "type": "string",
+   "description": "IP address of the site where the request originates. Use this if you want to enforce per-user limits.",
+   "location": "query"
+  }
+ },
+ "auth": {
+  "oauth2": {
+   "scopes": {
+    "https://www.googleapis.com/auth/userinfo.email": {
+     "description": "View your email address"
+    }
+   }
+  }
+ },
+ "schemas": {
+  "Profile": {
+   "id": "Profile",
+   "type": "object",
+   "properties": {
+    "age": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "displayName": {
+     "type": "string"
+    },
+    "mainEmail": {
+     "type": "string"
+    },
+    "serId": {
+     "type": "string"
+    },
+    "teeShirtSize": {
+     "$ref": "TeeShirtSize"
+    }
+   }
+  },
+  "ProfileForm": {
+   "id": "ProfileForm",
+   "type": "object",
+   "properties": {
+    "age": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "displayName": {
+     "type": "string"
+    },
+    "notificationEmail": {
+     "type": "string"
+    },
+    "teeShirtSize": {
+     "$ref": "TeeShirtSize"
+    }
+   }
+  },
+  "TeeShirtSize": {
+   "id": "TeeShirtSize",
+   "type": "string",
+   "enum": [
+    "L",
+    "M",
+    "NOT_SPECIFIED",
+    "S",
+    "XL",
+    "XS",
+    "XXL",
+    "XXXL"
+   ],
+   "enumDescriptions": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ]
+  }
+ },
+ "methods": {
+  "getProfile": {
+   "id": "planit.getProfile",
+   "path": "profile",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "Profile"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "saveProfile": {
+   "id": "planit.saveProfile",
+   "path": "profile",
+   "httpMethod": "POST",
+   "request": {
+    "$ref": "ProfileForm",
+    "parameterName": "resource"
+   },
+   "response": {
+    "$ref": "Profile"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  }
+ }
+}
