@@ -89,7 +89,6 @@ public class PlanitApi {
         // userId, displayName, mainEmail, age, and teeShirtSize
         Profile profile = new Profile(userId, displayName, mainEmail, age, teeShirtSize);
 
-        // TODO 3 (In Lesson 3)
         // Save the Profile entity in the datastore
         ofy().save().entity(profile).now();
 
@@ -113,7 +112,6 @@ public class PlanitApi {
     		throw new UnauthorizedException("Authorization required");
     	}
 
-    	//TODO
     	/// load the Profile Entitiy
     	String userId = user.getUserId();
     	Key key = Key.create(Profile.class, userId);

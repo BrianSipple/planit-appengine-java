@@ -14,16 +14,17 @@ How to Contribute
 Technology Stack
 ----------------
 
-## Language
+### Language
 - [Java][1]
 
-## APIs
+### APIs
 - [Google Cloud Endpoints][2]
 - [Google App Engine Maven plugin][3]
 
+### Misc
+
 * http://leafletjs.com/
 * https://www.twilio.com/
-* http://rubyonrails.org/
 
 History
 -------

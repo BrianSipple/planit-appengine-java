@@ -30,6 +30,15 @@ public class Profile {
 		this.age = age;
 		this.teeShirtSize = teeShirtSize;
 	}
+	
+	public void updateProfile(String userId, String displayName, 
+			String mainEmail, int age, TeeShirtSize teeShirtSize) {
+		this.userId = userId;
+		this.displayName = displayName;
+		this.mainEmail = mainEmail;
+		this.age = age;
+		this.teeShirtSize = teeShirtSize;
+	}
 
 
 	public String getDisplayName() {
