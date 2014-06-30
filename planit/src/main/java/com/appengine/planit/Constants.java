@@ -8,7 +8,8 @@ import com.google.api.server.spi.Constant;
  */
 
 public class Constants {
-	public static final String WEB_CLIENT_ID = "replace this with your web client id";
+	//public static final String WEB_CLIENT_ID = "replace this with your web client id"; 
+	  public static final String WEB_CLIENT_ID = "529076832321-e4r2ul363k21uift38bmhkd7eh8av4nv.apps.googleusercontent.com";  // We need to identify ourselves when we use the application's logic to log in a user
 	  public static final String ANDROID_CLIENT_ID = "replace this with your Android client ID";
 	  public static final String IOS_CLIENT_ID = "replace this with your iOS client ID";
 	  public static final String ANDROID_AUDIENCE = WEB_CLIENT_ID;

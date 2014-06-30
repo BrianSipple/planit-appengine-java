@@ -68,8 +68,10 @@ planitApp.controllers.controller('MyProfileCtrl',
         					} else {
         						// Succeeded to get the user profile
         						$scope.profile.displayName = response.result.displayName;
-        						$scope.profile.teeShirtSize = respone.result.teeShirtSize;
-        						$scope.initialProfile = respone.result;
+        						$scope.profile.age = response.result.age;
+        						$scope.profile.mainEmail = response.result.mainEmail;
+        						$scope.profile.teeShirtSize = response.result.teeShirtSize;
+        						$scope.initialProfile = response.result;
         					}
         				});
         			}
@@ -112,6 +114,8 @@ planitApp.controllers.controller('MyProfileCtrl',
         					$scope.submitted = false;
         					$scope.initialProfile = {
         						displayName: $scope.profile.displayName,
+        						mainEmail: $scope.profile.mainEmail,
+        						age: $scope.profile.age,
         						teeShirtSize: $scope.profile.teeShirtSize
         					};
 

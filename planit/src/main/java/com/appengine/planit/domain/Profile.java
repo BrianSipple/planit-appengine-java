@@ -31,16 +31,22 @@ public class Profile {
 		this.teeShirtSize = teeShirtSize;
 	}
 	
-	public void updateProfile(String userId, String displayName, 
-			String mainEmail, int age, TeeShirtSize teeShirtSize) {
-		this.userId = userId;
-		this.displayName = displayName;
-		this.mainEmail = mainEmail;
-		this.age = age;
-		this.teeShirtSize = teeShirtSize;
+	public void update(String displayName, int age, TeeShirtSize teeShirtSize) {
+		if (displayName != null) {
+			this.displayName = displayName;
+		}
+		
+		
+		if (age != 0) {
+			this.age = age;
+		}
+		
+		if (teeShirtSize != null) {
+			this.teeShirtSize = teeShirtSize;
+		}
 	}
 
-
+	
 	public String getDisplayName() {
 		return this.displayName;
 	}
@@ -61,7 +67,7 @@ public class Profile {
 	}
 
 
-	public String getserId() {
+	public String getUserId() {
 		return this.userId;
 	}
 	

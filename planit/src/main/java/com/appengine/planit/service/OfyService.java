@@ -1,5 +1,6 @@
 package com.appengine.planit.service;
 
+import com.appengine.planit.domain.Event;
 import com.appengine.planit.domain.Profile;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
@@ -14,6 +15,7 @@ public class OfyService {
      */
     static {
         factory().register(Profile.class);
+        factory().register(Event.class);
     }
 
     /**
