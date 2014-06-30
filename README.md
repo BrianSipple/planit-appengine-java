@@ -14,7 +14,7 @@ How to Contribute
 Technology Stack
 ----------------
 
-### Language
+### Server-Side Language
 - [Java][1]
 
 ### APIs
@@ -23,8 +23,9 @@ Technology Stack
 
 ### Misc
 
-* http://leafletjs.com/
-* https://www.twilio.com/
+- [AngularJS][4] (JavaScript MVC Framework)
+- [leafletjs][5]
+- [twilio][6]
 
 History
 -------
@@ -36,3 +37,6 @@ A development project is underway to build Planit as a full-fledged Web/mobile a
 [1]: http://java.com/en/
 [2]: https://developers.google.com/appengine/docs/java/endpoints/
 [3]: https://developers.google.com/appengine/docs/java/tools/maven
+[4]: http://leafletjs.com/
+[5]: https://angularjs.org/
+[6]: https://www.twilio.com/
