@@ -1,15 +1,16 @@
 package com.appengine.planit.domain;
 
-import java.awt.List;
+import java.util.List;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.appengine.planit.service.OfyService.ofy;
 import com.appengine.planit.form.EventForm;
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.search.checkers.Preconditions;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -24,9 +25,9 @@ import com.googlecode.objectify.condition.IfNotDefault;
 @Entity
 public class Event {
 
-	public static final String DEFAULT_CITY = "default city";
+	private static final String DEFAULT_CITY = "default city";
 	
-	public static final List<String> DEFAULT_CATEGORIES = ImmutableList.of("Default", "Category");
+	private static final List<String> DEFAULT_CATEGORIES = ImmutableList.of("Default", "Category");
 	
     /**
      * The id for the datastore key.
@@ -112,7 +113,6 @@ public class Event {
 	 * Street address line 2
 	 */
 	private String address2;
-
 	
 	/**
 	 * The name of the city where the event takes place
@@ -150,7 +150,7 @@ public class Event {
 		this.id = id;
 		this.profileKey = Key.create(Profile.class, organizerUserId);
 		this.organizerUserId = organizerUserId;
-		updateWithEventForm(Event);
+		updateWithEventForm(eventForm);
 		
 	}
 
@@ -208,7 +208,7 @@ public class Event {
 	 */
 	public String getOrganizerDisplayName() {
 		//Profile organizer = ofy().load().key(Key.create(Profile.class, organizerUserId)).now();
-		Profile organizer = ofy().load().key(Key.create(getProfileKey()).now();
+		Profile organizer = ofy().load().key(Key.create(Profile.class, organizerUserId)).now();
 		if (organizer == null) {
 			return organizer.getUserId();
 		} else {
@@ -297,10 +297,10 @@ public class Event {
 		this.maxAttendees = eventForm.getMaxAttendees();
 		this.registrationsAvailable = this.maxAttendees - attendees;
 		
-		this.address1 = eventForm.getAddress1() == null : null ? eventForm.getAddress1();
-		this.address2 = eventForm.getAddress2() == null : null ? eventForm.getAddress2();
+		this.address1 = eventForm.getAddress1() == null ? null : eventForm.getAddress1();
+		this.address2 = eventForm.getAddress2() == null ? null : eventForm.getAddress2();
 		this.city = eventForm.getCity() == null ? DEFAULT_CITY : eventForm.getCity();
-		this.state = eventForm.getState() == null : null ? eventForm.getState();
+		this.state = eventForm.getState() == null ? null : eventForm.getState();
 		this.zipCode = eventForm.getZipCode() == null ? null : eventForm.getZipCode();
 
 	}
@@ -324,10 +324,10 @@ public class Event {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("Id: " + id + "\n")
 			.append("Title: ").append(title).append("\n");
-		if (topics != null && topics.size() > 0) {
+		if (categories != null && categories.size() > 0) {
 			stringBuilder.append("Topics:\n ");
-			for (String topic : topics) {
-				stringBuilder.append("\t").append(topic).append("\n");
+			for (String category : categories) {
+				stringBuilder.append("\t").append(category).append("\n");
 			}
 		}
 		if (startDate != null) {
