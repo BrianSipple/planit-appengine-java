@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/pOe7055xrxfWueu8ZKOf8nmgl-w\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/w4hDGhwGPtoN3wBnMf3x6-e-8Yo\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -69,6 +69,131 @@
   }
  },
  "schemas": {
+  "Event": {
+   "id": "Event",
+   "type": "object",
+   "properties": {
+    "address1": {
+     "type": "string"
+    },
+    "address2": {
+     "type": "string"
+    },
+    "attendees": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "categories": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "city": {
+     "type": "string"
+    },
+    "description": {
+     "type": "string"
+    },
+    "endDate": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "id": {
+     "type": "string",
+     "format": "int64"
+    },
+    "maxAttendees": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "month": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "organizerDisplayName": {
+     "type": "string"
+    },
+    "registrationsAvailable": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "startDate": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "state": {
+     "type": "string"
+    },
+    "title": {
+     "type": "string"
+    },
+    "webSafeKey": {
+     "type": "string"
+    },
+    "zipCode": {
+     "type": "string"
+    }
+   }
+  },
+  "EventForm": {
+   "id": "EventForm",
+   "type": "object",
+   "properties": {
+    "address1": {
+     "type": "string"
+    },
+    "address2": {
+     "type": "string"
+    },
+    "attendees": {
+     "type": "array",
+     "items": {
+      "$ref": "User"
+     }
+    },
+    "categories": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "city": {
+     "type": "string"
+    },
+    "description": {
+     "type": "string"
+    },
+    "endDate": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "maxAttendees": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "organizer": {
+     "$ref": "User"
+    },
+    "registrationsAvailable": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "startDate": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "state": {
+     "type": "string"
+    },
+    "title": {
+     "type": "string"
+    },
+    "zipCode": {
+     "type": "string"
+    }
+   }
+  },
   "Profile": {
    "id": "Profile",
    "type": "object",
@@ -83,11 +208,11 @@
     "mainEmail": {
      "type": "string"
     },
-    "serId": {
-     "type": "string"
-    },
     "teeShirtSize": {
      "$ref": "TeeShirtSize"
+    },
+    "userId": {
+     "type": "string"
     }
    }
   },
@@ -130,9 +255,47 @@
     "",
     ""
    ]
+  },
+  "User": {
+   "id": "User",
+   "type": "object",
+   "properties": {
+    "authDomain": {
+     "type": "string"
+    },
+    "email": {
+     "type": "string"
+    },
+    "federatedIdentity": {
+     "type": "string"
+    },
+    "nickname": {
+     "type": "string"
+    },
+    "userId": {
+     "type": "string"
+    }
+   }
   }
  },
  "methods": {
+  "planit.createEvent": {
+   "id": "planit.createEvent",
+   "parameters": {
+    "resource": {
+     "$ref": "EventForm"
+    }
+   },
+   "parameterOrder": [
+    "resource"
+   ],
+   "returns": {
+    "$ref": "Event"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "planit.getProfile": {
    "id": "planit.getProfile",
    "allowGet": true,

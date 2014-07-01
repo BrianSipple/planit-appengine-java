@@ -139,7 +139,7 @@ planitApp.controllers.controller('CreateEventCtrl',
 	function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
 
 		/**
-         * The conference object being edited in the page.
+         * The event object being edited in the page.
          * @type {{}|*}
          */
         $scope.event = $scope.event || {};
@@ -151,8 +151,10 @@ planitApp.controllers.controller('CreateEventCtrl',
         $scope.cities = [
             'Chicago',
             'London',
+            'Minneapolis',
             'Paris',
             'San Francisco',
+            'Seattle',
             'Tokyo'
         ];
 
@@ -160,7 +162,7 @@ planitApp.controllers.controller('CreateEventCtrl',
          * Holds the default values for the input candidates for topics select.
          * @type {string[]}
          */
-        $scope.category = [
+        $scope.categories = [
         	'Responsive Web Design',
             'Programming Languages',
             'Web Technologies',
@@ -218,8 +220,8 @@ planitApp.controllers.controller('CreateEventCtrl',
         $scope.isValidEvent = function (eventForm) {
             return !eventForm.$invalid &&
                 $scope.isValidMaxAttendees() &&
-                $scope.isValidDates() &&
-                $scope.isValidTimes();
+                $scope.isValidDates();
+                //&& $scope.isValidTimes();
         }
 
         /**

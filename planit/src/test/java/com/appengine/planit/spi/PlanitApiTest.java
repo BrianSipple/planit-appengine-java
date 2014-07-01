@@ -153,7 +153,7 @@ public class PlanitApiTest {
         profile = ofy().load().key(Key.create(Profile.class, user.getUserId())).now();
         assertEquals(USER_ID, profile.getUserId());
         assertEquals(EMAIL, profile.getMainEmail());
-        assertEquals(AGE, profile.getAge());
+        assertEquals(newAge, profile.getAge());
         assertEquals(newTeeShirtSize, profile.getTeeShirtSize());
         assertEquals(newDisplayName, profile.getDisplayName());
     }
