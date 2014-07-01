@@ -1,4 +1,4 @@
-activeProfiles=/Users/BrianSipple/.m2/repository/com/google/appengine/appengine-api-1.0-sdk/1.9.4/appengine-api-1.0-sdk-1.9.4.jar\n/Users/BrianSipple/.m2/repository/com/google/appengine/appengine-endpoints/1.9.4/appengine-endpoints-1.9.4.jar\n/Users/BrianSipple/.m2/repository/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar\n/Users/BrianSipple/.m2/repository/javax/inject/javax.inject/1/javax.inject-1.jar\n/Users/BrianSipple/.m2/repository/junit/junit/4.11/junit-4.11.jar\n/Users/BrianSipple/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar\n/Users/BrianSipple/.m2/repository/com/google/appengine/appengine-testing/1.9.4/appengine-testing-1.9.4.jar\n/Users/BrianSipple/.m2/repository/com/google/appengine/appengine-api-stubs/1.9.4/appengine-api-stubs-1.9.4.jar
+activeProfiles=
 eclipse.preferences.version=1
 resolveWorkspaceProjects=true
 version=1

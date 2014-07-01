@@ -1,8 +1,0 @@
-com/appengine/planit/domain/Event.class
-com/appengine/planit/domain/Profile.class
-com/appengine/planit/service/OfyService.class
-com/appengine/planit/Constants.class
-com/appengine/planit/spi/PlanitApi.class
-com/appengine/planit/form/EventForm.class
-com/appengine/planit/form/ProfileForm$TeeShirtSize.class
-com/appengine/planit/form/ProfileForm.class

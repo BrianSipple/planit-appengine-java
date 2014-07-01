@@ -3783,7 +3783,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-nav {
     margin: 7.25px -15px;
 }
-.navbar-nav > li > a {
+.navbar-nav > li > a: {
     padding-top: 10px;
     padding-bottom: 10px;
     line-height: 21px;
@@ -4038,10 +4038,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     color: #000000;
 }
 
-.navbar-inverse .navbar-nav > li {
-    border-width: 1px 0 1px 0;
-    border-color: rgba(0, 0, 0, 0.4);
-}
 .navbar-inverse .navbar-nav > li > a {
     color: #000000;
 }
