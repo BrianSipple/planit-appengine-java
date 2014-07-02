@@ -58,7 +58,7 @@ public class EventForm {
      */
     public EventForm(String title, Date startDate, Date endDate, 
     	String description, List<String> categories, User organizer,
-    	List<User> attendess, int maxAttendess, int registrationsAvailable,
+    	List<User> attendess, int maxAttendees, int registrationsAvailable,
     	String address1, String address2, String city, String state, String zipCode) {
 
     	this.title = title;
