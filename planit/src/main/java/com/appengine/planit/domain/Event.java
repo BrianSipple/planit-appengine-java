@@ -287,7 +287,7 @@ public class Event {
 			this.month = calendar.get(calendar.MONTH) + 1;
 		}
 		
-		this.organizerUserId = eventForm.getOrganizer().getUserId().toString();
+		//this.organizerUserId = eventForm.getOrganizer().getUserId().toString();
 		
 		// Check maxAttendees value against the number of already allocated seats.
 		attendees = maxAttendees - registrationsAvailable;

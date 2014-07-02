@@ -17,7 +17,7 @@ public class EventForm {
     
     private List<String> categories;
     
-    private User organizer;
+    //private User organizer;
     
     private List<User> attendees;
     
@@ -57,7 +57,7 @@ public class EventForm {
      * @param zipCode
      */
     public EventForm(String title, Date startDate, Date endDate, 
-    	String description, List<String> categories, User organizer,
+    	String description, List<String> categories, /*User organizer,*/
     	List<User> attendess, int maxAttendees, int registrationsAvailable,
     	String address1, String address2, String city, String state, String zipCode) {
 
@@ -66,7 +66,7 @@ public class EventForm {
     	this.endDate = endDate == null ? null : new Date(endDate.getTime());
     	this.description = description;
     	this.categories = categories == null ? null : categories;
-    	this.organizer = organizer;
+    	//this.organizer = organizer;
     	this.attendees = attendees == null ? null : attendees;
     	this.maxAttendees = maxAttendees;
     	this.registrationsAvailable = registrationsAvailable;
@@ -99,9 +99,12 @@ public class EventForm {
 		return categories;
 	}
 
+	/*
 	public User getOrganizer() {
 		return organizer;
 	}
+	*/
+	
 
 	public List<User> getAttendees() {
 		return attendees;

@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /**
  * The root planitApp module.
@@ -189,7 +189,7 @@ planitApp.controllers.controller('CreateEventCtrl',
          * @returns {boolean} true if the dates are valid, false otherwise.
          */
         $scope.isValidDates = function () {
-        	if (!$scope.event.startDate && !scope.event.endDate) {
+        	if (!$scope.event.startDate && !$scope.event.endDate) {
         		return true;
         	}
         	if ($scope.event.startDate && !$scope.event.endDate) {
@@ -203,13 +203,13 @@ planitApp.controllers.controller('CreateEventCtrl',
          * @returns {boolean} true if the dates are valid, false otherwise.
          */
         $scope.isValidTimes = function () {
-        	if (!$scope.event.startTime && !scope.event.endTime) {
+        	if (!$scope.event.startTime && !$scope.event.endTime) {
         		return true;
         	}
-        	if ($scope.event.startTime && !scope.event.endTime) {
+        	if ($scope.event.startTime && !$scope.event.endTime) {
         		return true;
         	}
-        	return $scope.event.starttime <= $scope.event.endTime;
+        	return $scope.event.startTime <= $scope.event.endTime;
         }
 
         /**
@@ -236,7 +236,7 @@ planitApp.controllers.controller('CreateEventCtrl',
         	}
 
         	$scope.loading = true;
-        	gapi.client.planit.createEvent($scope.events)
+        	gapi.client.planit.createEvent($scope.event)
         		.execute(function (resp) {
         			$scope.$apply(function () {
         				$scope.loading = false;

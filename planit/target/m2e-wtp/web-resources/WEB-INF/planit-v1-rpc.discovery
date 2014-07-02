@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/w4hDGhwGPtoN3wBnMf3x6-e-8Yo\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/E8nEVSWL35oB-_Ow3jPSzQ1KCwk\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -171,9 +171,6 @@
     "maxAttendees": {
      "type": "integer",
      "format": "int32"
-    },
-    "organizer": {
-     "$ref": "User"
     },
     "registrationsAvailable": {
      "type": "integer",

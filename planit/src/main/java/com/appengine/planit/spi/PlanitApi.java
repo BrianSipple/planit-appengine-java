@@ -1,5 +1,6 @@
 package com.appengine.planit.spi;
 
+
 import static com.appengine.planit.service.OfyService.ofy;
 
 import java.util.Date;
@@ -57,28 +58,22 @@ public class PlanitApi {
 
 	// The request that invokes this method should provide data that 
 	// conforms to the fields defined in ProfileForm
-	public Profile saveProfile(final User user, ProfileForm profileForm) throws UnauthorizedException {
-
-		String userId = null;
-		String displayName = "Your name will go here";
-		String mainEmail = null;
-		int age = 0;
-		TeeShirtSize teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
+	public Profile saveProfile(final User user, ProfileForm profileForm) throws UnauthorizedException, NumberFormatException {
 
 		// If the user is not logged in, throw an UnauthorizedException
 		if (user == null) {
 			throw new UnauthorizedException("Authorization required");
 		}
-
+		
 		// Get the userId and mainEmail
-		mainEmail = user.getEmail();
-		userId = user.getUserId();
+		String mainEmail = user.getEmail();
+		String userId = user.getUserId();
 
 		// Get the profile attributes from the profile form
-		teeShirtSize = profileForm.getTeeShirtSize();
-		displayName = profileForm.getDisplayName();
-		age = profileForm.getAge();
-
+		TeeShirtSize teeShirtSize = profileForm.getTeeShirtSize();
+		String displayName = profileForm.getDisplayName();
+		int age = profileForm.getAge();
+		
 
 		// Attempt to load in the users profile from their userId to determine whether they are 
 		// creating a new profile or just updating their existing one. 
@@ -97,6 +92,7 @@ public class PlanitApi {
 			if (displayName == null) {
 				displayName = extractDefaultDisplayNameFromEmail(user.getEmail());
 			}
+
 
 			// Create a new Profile entity from the
 			// userId, displayName, mainEmail, age, and teeShirtSize
@@ -145,21 +141,22 @@ public class PlanitApi {
 			throw new UnauthorizedException("Authentication required");
 		}
 
-		String userId = null;
-		String title = null;
-		Date startDate = null;
-		Date endDate = null;
-		String description = null;
-		List<String> categories = null;
-		User organizer = null;
-		List<User> attendees = null;
-		int maxAttendees = 0;
-		int registrationsAvailable = 0;
-		String address1 = null;
-		String address2 = null;
-		String city =  null;
-		String state = null;
-		String zipCode = null;
+		final String userId = null;
+		final String title = null;
+		final Date startDate = null;
+		final Date endDate = null;
+		final String description = null;
+		final List<String> categories = null;
+		final User organizer = null;
+		final List<User> attendees = null;
+		final int maxAttendees = 0;
+		final int registrationsAvailable = 0;
+		final String address1 = null;
+		final String address2 = null;
+		final String city =  null;
+		final String state = null;
+		final String zipCode = null; 
+		
 
 	}
 	
