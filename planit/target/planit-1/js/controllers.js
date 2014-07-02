@@ -170,7 +170,9 @@ planitApp.controllers.controller('CreateEventCtrl',
             'Data Science',
             'Artificial Intelligence',
             'Robotics',
-            'Open Data'
+            'Open Data',
+            'Medical Innovations',
+            'Other'
         ];
 
         /**

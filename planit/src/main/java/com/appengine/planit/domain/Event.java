@@ -76,6 +76,7 @@ public class Event {
 	/**
 	 * Categories related to this event (can be one or multiple)
 	 */
+	@Index
 	private List<String> categories;
 	
 	
@@ -95,6 +96,7 @@ public class Event {
 	/**
 	 * Current number of attendees
 	 */
+	@Index
 	private int attendees;
 	
 	
@@ -210,7 +212,7 @@ public class Event {
 		//Profile organizer = ofy().load().key(Key.create(Profile.class, organizerUserId)).now();
 		Profile organizer = ofy().load().key(Key.create(Profile.class, organizerUserId)).now();
 		if (organizer == null) {
-			return organizer.getUserId();
+			return organizerUserId;
 		} else {
 			return organizer.getDisplayName();
 		}
@@ -328,7 +330,7 @@ public class Event {
 		StringBuilder stringBuilder = new StringBuilder("Id: " + id + "\n")
 			.append("Title: ").append(title).append("\n");
 		if (categories != null && categories.size() > 0) {
-			stringBuilder.append("Topics:\n ");
+			stringBuilder.append("Categories:\n ");
 			for (String category : categories) {
 				stringBuilder.append("\t").append(category).append("\n");
 			}

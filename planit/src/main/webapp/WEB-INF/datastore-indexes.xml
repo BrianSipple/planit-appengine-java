@@ -1,0 +1,12 @@
+<xml version="1.0" encoding="UTF-8">
+   	<datastore-indexes autoGenerate="false">
+	    
+	    <datastore-index kind="Event" ancestor="false">
+	        <property name="city" direction="asc" />
+	        <property name="category" direction="asc" />
+	        <property name="attendees" direction="desc" />	        
+	    </datastore-index>            
+
+	</datastore-indexes> 
+   
+</xml>
