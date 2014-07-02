@@ -249,7 +249,7 @@ public class PlanitApi {
 			path="queryEvents", 
 			httpMethod = HttpMethod.POST
 			)
-	public List<Event> queryEvents(EventsQueryForm queryForm) {
+	public List<Event> queryEvents(EventQueryForm queryForm) {
 
 		Query<Event> query;
 
@@ -274,7 +274,7 @@ public class PlanitApi {
 			path= "queryEventsCreated",
 			httpMethod = HttpMethod.POST
 			)
-	public List<Event> queryEventsCreated(User user, EventsQueryForm queryForm) throws UnauthorizedException {
+	public List<Event> queryEventsCreated(User user, EventQueryForm queryForm) throws UnauthorizedException {
 
 		// Confirm that the user is logged in
 		if (user == null) {
