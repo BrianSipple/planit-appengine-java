@@ -2,7 +2,7 @@ PlanIt
 ==========
 Provides citizens with a mechanism to broadcast events (pick-up sports games, service projects, etc.) taking place in their communities and neighborhoods. More than a "Meetup" application, Planit's goal isn't just to coordinate activities, but also to find intuitive uses for such activity data thorugh geographic mapping, machine learning algorithms, and more. A main objective is to have an application that local municipalities and institutions can leverage to provide more effective services for their citizens.
 
-Current AppEngine app is (intermittently) deployed at [planit-web.appsot.com](https://planit-web.appspot.com)
+Current AppEngine app is in early development and (intermittently) deployed at [planit-web.appsot.com](https://planit-web.appspot.com)
 
 
 How to Use
