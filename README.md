@@ -1,8 +1,8 @@
 PlanIt
 ==========
-Provides citizens a mechanism to advertise  events (pick-up sports games, service projects, etc.) taking place in their communities and neighborhoods. More than a "Meetup" application, Planit's goal isn't just to coordinate activities, but also to find intuitive uses for such activity data thorugh geographic mapping, machine learning algorithms, and more. A main objective is to have an application that local municipalities and institutions can leverage to provide more effective services for their citizens.
+Provides citizens with a mechanism to broadcast events (pick-up sports games, service projects, etc.) taking place in their communities and neighborhoods. More than a "Meetup" application, Planit's goal isn't just to coordinate activities, but also to find intuitive uses for such activity data thorugh geographic mapping, machine learning algorithms, and more. A main objective is to have an application that local municipalities and institutions can leverage to provide more effective services for their citizens.
 
-Current AppEngine app is (intermittently) deployed at [planit-web.appsot.com](https://planit-web.appspot.com)
+Current AppEngine app is in early development and (intermittently) deployed at [planit-web.appsot.com](https://planit-web.appspot.com)
 
 
 How to Use
@@ -25,7 +25,7 @@ Technology Stack
 
 - [AngularJS][4] (JavaScript MVC Framework)
 - [leafletjs][5]
-- [d3.js][6]
+- [d3js][6]
 - [twilio][7]
 
 
@@ -40,5 +40,5 @@ A development project is underway to build Planit as a full-fledged Web/mobile a
 [3]: https://developers.google.com/appengine/docs/java/tools/maven
 [4]: http://leafletjs.com/
 [5]: https://angularjs.org/
-[6]: https://d3js.org/
+[6]: http://www.d3js.org/
 [7]: https://www.twilio.com/
