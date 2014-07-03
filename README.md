@@ -25,7 +25,7 @@ Technology Stack
 
 - [AngularJS][4] (JavaScript MVC Framework)
 - [leafletjs][5]
-- [d3.js][6]
+- [d3js][6]
 - [twilio][7]
 
 
@@ -40,5 +40,5 @@ A development project is underway to build Planit as a full-fledged Web/mobile a
 [3]: https://developers.google.com/appengine/docs/java/tools/maven
 [4]: http://leafletjs.com/
 [5]: https://angularjs.org/
-[6]: https://d3js.org/
+[6]: http://www.d3js.org/
 [7]: https://www.twilio.com/
