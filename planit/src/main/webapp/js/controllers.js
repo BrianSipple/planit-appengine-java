@@ -295,7 +295,8 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
         {enumValue: 'CITY', displayName: 'City'},
         {enumValue: 'CATEGORY', displayName: 'Category'},
         {enumValue: 'MONTH', displayName: 'Start month'},
-        {enumValue: 'MAX_ATTENDEES', displayName: 'Max Attendees'}
+        {enumValue: 'MAX_ATTENDEES', displayName: 'Max Attendees'},
+        {enumValue: 'ATTENDEES', displayName: 'Attendees'}
     ]
 
     /**

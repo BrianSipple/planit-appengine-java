@@ -2,13 +2,14 @@ package com.appengine.planit.spi;
 
 import static com.appengine.planit.service.OfyService.ofy;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.appengine.planit.Constants;
 import com.appengine.planit.domain.Event;
 import com.appengine.planit.domain.Profile;
 import com.appengine.planit.form.EventForm;
+import com.appengine.planit.form.EventQueryForm;
 import com.appengine.planit.form.ProfileForm;
 import com.appengine.planit.form.ProfileForm.TeeShirtSize;
 import com.google.api.server.spi.config.Api;
@@ -238,9 +239,15 @@ public class PlanitApi {
 
 
 	/**
-	 * Queries from all events created. We'll build the qurey with a passed-in EventsQueryForm
+	 * Queries from all events created. We'll build the query with a passed-in EventsQueryForm
 	 * that is used to collect parameters from the user. That way, we can 
 	 * just edit the form class, and have our API here be as robust to user input as possible!
+	 * 
+	 * We also load in each of the events' organizers' Profile keys so that we can 
+	 * dynamically display their names with the event.
+	 * 
+	 * As an optimization, this is performed as a preloading step where we load the entire list of 
+	 * names from a list of keys... to prevent separate hits on the Datastore for each event.
 	 * 
 	 * @return a list of events
 	 */
@@ -249,16 +256,28 @@ public class PlanitApi {
 			path="queryEvents", 
 			httpMethod = HttpMethod.POST
 			)
-	public List<Event> queryEvents(EventQueryForm queryForm) {
+	public List<Event> queryEvents(EventQueryForm eventQueryForm) {
 
-		Query<Event> query;
+		Iterable<Event> eventsIterable = eventQueryForm.getQuery().list();
+		ArrayList<Event> result = new ArrayList();
+		
+		List<Key<Profile>> organizersKeyList = new ArrayList();
+		
+		for (Event event: eventsIterable) {
+			
+			organizersKeyList.add(Key.create(Profile.class, event.getOrganizerUserId()));
+			result.add(event);
+		}
+		
+		// To avoid separate datastore gets for each Event, pre-fetch the Profiles.
+		ofy().load().keys(organizersKeyList);
+		
+		return result;
 
 		
 		
 		
 		
-		//List<Event> = query.list();
-		return query.list();
 	}
 
 	
@@ -274,7 +293,7 @@ public class PlanitApi {
 			path= "queryEventsCreated",
 			httpMethod = HttpMethod.POST
 			)
-	public List<Event> queryEventsCreated(User user, EventQueryForm queryForm) throws UnauthorizedException {
+	public List<Event> queryEventsCreated(User user, EventQueryForm eventQueryForm) throws UnauthorizedException {
 
 		// Confirm that the user is logged in
 		if (user == null) {
@@ -291,7 +310,7 @@ public class PlanitApi {
 				.ancestor(userKey)
 				.order("title");
 		
-		return query;
+		return query.list();
 	}
 
 	/**
