@@ -313,7 +313,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     ];
 
     /**
-     * Holds the conferences currently displayed in the page.
+     * Holds the events currently displayed in the page.
      * @type {Array}
      */
     $scope.events = [];
@@ -449,7 +449,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     };
 
     /**
-     * Invokes the event.queryConferences API.
+     * Invokes the event.queryEvents API.
      */
     $scope.queryEventsAll = function () {
         var sendFilters = {

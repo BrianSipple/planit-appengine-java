@@ -121,7 +121,6 @@ public class EventQueryForm {
 	/**
 	 * A list of query filters
 	 */
-
 	private List<Filter> filters = new ArrayList<>(0);
 
 	/**
@@ -130,20 +129,22 @@ public class EventQueryForm {
 	@ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
 	private Filter inequalityFilter;
 
+
 	public EventQueryForm() {
 
 	}
 
+	
 	/**
 	 * Checks the feasibility of the whole query
 	 */
 	private void checkFilters() {
 		for (Filter filter : this.filters) {
-			if (filter.operator.isInequalityFilter()) {
+			if (filter.operator.isInequalityFilter()) { //danger zone
 				if (inequalityFilter != null && !inequalityFilter.field.equals(filter.field)) {
-					throw new IllegalArgumentException("Inequality filter is only allowed on one data property");
+					throw new IllegalArgumentException("Inequality filter is only allowed on one field.");
 				}
-				inequalityFilter = filter;
+				inequalityFilter = filter;  //update the filter we're checking to the most recent filter
 			}
 		}
 	}
@@ -158,13 +159,13 @@ public class EventQueryForm {
 	}
 	
     /**
-     * Adds a query filter.
+     * Adds a query filter to our current query form.
      *
      * @param filter A Filter object for the query.
      * @return this for method chaining.
      */
 	public EventQueryForm filter(Filter filter) {
-		if (filter.operator.isInequalityFilter()) {
+		if (filter.operator.isInequalityFilter()) { //danger zone
 			if (inequalityFilter != null && !filter.field.equals(filter.field)) {
 				throw new IllegalArgumentException(
 						"Inequality filter is allowed on only one field");
@@ -187,7 +188,8 @@ public class EventQueryForm {
 		checkFilters();
 		Query<Event> query = ofy().load().type(Event.class);
         
-		// No inequality filters -- we'll go ahead and implement our default ordering mechanism
+		// Where we implement our default ordering mechanism is contingent upon
+		// whether or not we have inequality filters in our query.
 		if (inequalityFilter == null) {
 			query = query.order("title");
 		} else {
@@ -197,7 +199,7 @@ public class EventQueryForm {
 		for (Filter filter : this.filters) {
 			//Applies filters in order.
 			if (filter.field.fieldType == FieldType.STRING) {
-				query = query.filter(String.format("%s %s", filter.field.getFieldName(), 
+				query = query.filter(String.format("%s %s", filter.field.getFieldName(),  // .filter([fieldName] [operator], [value])  <---- this is the format we want to create
 						filter.operator.getQueryOperator()), filter.value);
 			} else if (filter.field.fieldType == FieldType.INTEGER) {
 				query = query.filter(String.format("%s %s", filter.field.getFieldName(),
