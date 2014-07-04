@@ -15,6 +15,10 @@ import com.appengine.planit.form.ProfileForm.TeeShirtSize;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
+import com.google.api.server.spi.config.Named;
+import com.google.api.server.spi.response.ConflictException;
+import com.google.api.server.spi.response.ForbiddenException;
+import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
@@ -33,13 +37,8 @@ description = "API for the Conference Central Backend application.")
 
 public class PlanitApi {
 
-	/*
-	 * Get the display name from the user's email. For example, if the email is
-	 * lemoncake@example.com, then the display name becomes "lemoncake."
-	 */
-	private static String extractDefaultDisplayNameFromEmail(String email) {
-		return email == null ? null : email.substring(0, email.indexOf("@"));
-	}
+	public static final String EVENT_REGISTRATION_404 = "No Event found with key: ";
+
 
 	/**
 	 * Creates or updates a Profile object associated with the given user
@@ -167,25 +166,6 @@ public class PlanitApi {
 
 	 */
 
-	/**
-	 * Gets the Profile entity for the current user
-	 * or creates it if it doesn't exist
-	 * @param user
-	 * @return user's Profile
-	 */
-	private static Profile getProfileFromUser(User user) {
-		// First fetch the user's Profile from the datastore.
-		Profile profile = ofy().load().key(
-				Key.create(Profile.class, user.getUserId())).now();
-		if (profile == null) {
-			// Create a new Profile if it doesn't exist.
-			// Use default displayName and teeShirtSize
-			String email = user.getEmail();
-			profile = new Profile(user.getUserId(),
-					extractDefaultDisplayNameFromEmail(email), email, 0, TeeShirtSize.NOT_SPECIFIED);
-		}
-		return profile;
-	}
 
 	/**
 	 * Creates a new Event object and stores it to the datastore.
@@ -260,28 +240,28 @@ public class PlanitApi {
 
 		Iterable<Event> eventsIterable = eventQueryForm.getQuery().list();
 		ArrayList<Event> result = new ArrayList();
-		
+
 		List<Key<Profile>> organizersKeyList = new ArrayList();
-		
+
 		for (Event event: eventsIterable) {
-			
+
 			organizersKeyList.add(Key.create(Profile.class, event.getOrganizerUserId()));
 			result.add(event);
 		}
-		
+
 		// To avoid separate datastore gets for each Event, pre-fetch the Profiles.
 		ofy().load().keys(organizersKeyList);
-		
+
 		return result;
 
-		
-		
-		
-		
+
+
+
+
 	}
 
-	
-	
+
+
 	/**
 	 * Return a list of events created specifically by that user (the "ancestor" to those event entities)
 	 * @param user
@@ -309,7 +289,7 @@ public class PlanitApi {
 		Query<Event> query = ofy().load().type(Event.class)
 				.ancestor(userKey)
 				.order("title");
-		
+
 		return query.list();
 	}
 
@@ -346,18 +326,18 @@ public class PlanitApi {
 	public List<Event> queryEventsAndFilter(String property, String operator, String value) {
 
 		String propertyAndOperator = property + " " + operator;
-		
+
 		Query<Event> query = ofy().load().type(Event.class)
 				.order(property)
 				.filter(propertyAndOperator, value);  // ordering and sorting must be applied before filtering!
-		
+
 		return query.list();
 
 	}
-	
 
-	
-//////////////////////////////////////////////////// CUSTOM QUERIES //////////////////////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////// CUSTOM QUERIES //////////////////////////////////////////////////////////////
 	/*
 	 * For unique / private / experimental cases, we can always hardwire custom queries directly into the API... even
 	 * if they won't be exposed to the user interface. 
@@ -366,29 +346,194 @@ public class PlanitApi {
 			name="queryEventsCustomFilter",
 			path="queryEventsCustomFilter",
 			httpMethod = HttpMethod.POST
-		)
+			)
 	public List<Event> queryEventsCustomFilter() {
-		
+
 		Query<Event> query = ofy().load().type(Event.class)
 				.order("city")
-				
+
 				.filter("city =", "Minneapolis")
 				.filter("topic =", "Artificial Intelligence")
 				.filter("attendees >=", 100)
 				.filter("attendees <=", 10000)		// we can't have multiple inequality filters if they correspond to different properties, but multiple inequality filters on the same property is okay. 
 				.order("title")						// all ordering must be done either on the ensuing, corresponding filter property, or as an extra filter that we tack on at the end 
 				.order("month");
-		
+
 		List<Event> events = query.list();
-		
+
 		return events;
 	}
-	
-	
-//////////////////////////////////////////////////// END CUSTOM QUERIES //////////////////////////////////////////////////////////////
 
-	
-	
+
+
+
+	////////////// Event REGISTRATION //////////////////////
+
+	/**
+	 * A wrapper for boolean
+	 * We need such wrappers for primitive return types because
+	 * 
+	 * endpoints functions must return an Object instance. They can't return
+	 * a type class such as Boolean, Integer, or String
+	 */
+	public class WrappedBoolean {
+		private final Boolean result;
+		private final String reason;
+
+		public WrappedBoolean(Boolean result) {
+			this.result = result;
+			this.reason = "";
+		}
+
+		public WrappedBoolean(Boolean result, String reason) {
+			this.result = result;
+			this.reason = reason;
+		}
+
+		public Boolean getResult() {
+			return this.result;
+		}
+
+		public String getReason() {
+			return this.reason;
+		}
+	}
+
+
+	/**
+	 * Register to attend the specified Conference.
+	 *
+	 * @param user An user who invokes this method, null when the user is not signed in.
+	 * @param websafeConferenceKey The String representation of the Conference Key.
+	 * @return Boolean true when success, otherwise false
+	 * @throws UnauthorizedException when the user is not signed in.
+	 * @throws NotFoundException when there is no Conference with the given conferenceId.
+	 */
+	@ApiMethod(
+			name="registerForEvent",
+			path="registerForEvent",
+			httpMethod = HttpMethod.POST
+			)
+	public WrappedBoolean registerForEvent(final User user, 
+			@Named("websafeEventKey") final String websafeEventKey)
+					throws UnauthorizedException, NotFoundException,
+					ForbiddenException, ConflictException {
+		// If not signed in, throw a 401 error.
+		if (user == null) {
+			throw new UnauthorizedException("Authorization required");
+		}
+
+		// Get the userId
+		String userId = user.getUserId();
+
+		WrappedBoolean result;
+
+		// Start the transaction
+		try {
+			// Get the event key -- we can get it form the websafeEventKey
+			// Java will throw a fordidden exception if the key cannot be created
+			Key<Event> eventKey = Key.create(Event.class, websafeEventKey);
+
+			// Get the event entity from the DataStore
+			Event event = ofy().load().key(eventKey).now();
+
+			// Throw a 404 if the event is not found
+			if (event == null) {
+				result = new WrappedBoolean(false, 
+						EVENT_REGISTRATION_404 + websafeEventKey);
+			}
+
+			// Get the users profile from the DataStore
+			Profile profile = getProfileFromUser(user);
+
+			// Has the user already registered to this event?
+			if (profile.getEventsToAttendKeys().contains(websafeEventKey)) {
+				result = new WrappedBoolean(false, "Already registered!");
+				// Is the event full?
+			} else if (event.getRegistrationsAvailable() <= 0) {
+				result = new WrappedBoolean(false, "This event is already full");
+
+			} else {
+				// All clear... let's sign up!
+
+				// Add the websafeEventKey to the Profile's eventsToAttendProperty
+				profile.addToEventsToAttendKeys(websafeEventKey);
+
+				// Decrease the event's registrations available
+				event.confirmRegistration(1);
+
+				// Save the event and profile entities in one unified transaction
+				ofy().save().entities(event, profile).now();
+
+				// We're booked!
+				result = new WrappedBoolean(true, "Registration successfull");
+			}
+
+		} catch (Exception e) {
+			result = new WrappedBoolean(false, "Unknown Exception");
+		}
+
+
+		// if result is false
+		if (!result.getResult()) {
+			if (result.getReason().contains(EVENT_REGISTRATION_404)) {
+				throw new NotFoundException(result.getReason());
+
+			} else if (result.getReason() == "Already registered!") {
+				throw new ConflictException("You have already registered!");
+
+			} else if (result.getReason() == "This event is already full") {
+				throw new ConflictException("This event is already full");
+
+			} else {
+				throw new ForbiddenException("Unknown exception");
+			}
+		}
+		return result;
+	}
+
+
+
+
+
+
+
+
+
+
+
+	///////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
+
+
+	/**
+	 * Get the display name from the user's email. For example, if the email is
+	 * lemoncake@example.com, then the display name becomes "lemoncake."
+	 */
+	private static String extractDefaultDisplayNameFromEmail(String email) {
+		return email == null ? null : email.substring(0, email.indexOf("@"));
+	}
+
+
+	/**
+	 * Gets the Profile entity for the current user
+	 * or creates it if it doesn't exist
+	 * @param user
+	 * @return user's Profile
+	 */
+	private static Profile getProfileFromUser(User user) {
+		// First fetch the user's Profile from the datastore.
+		Profile profile = ofy().load().key(
+				Key.create(Profile.class, user.getUserId())).now();
+		if (profile == null) {
+			// Create a new Profile if it doesn't exist.
+			// Use default displayName and teeShirtSize
+			String email = user.getEmail();
+			profile = new Profile(user.getUserId(),
+					extractDefaultDisplayNameFromEmail(email), email, 0, TeeShirtSize.NOT_SPECIFIED);
+		}
+		return profile;
+	}
+
 }
 
 

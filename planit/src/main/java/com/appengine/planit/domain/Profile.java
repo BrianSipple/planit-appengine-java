@@ -1,6 +1,10 @@
 package com.appengine.planit.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.appengine.planit.form.ProfileForm.TeeShirtSize;
+import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableList;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
@@ -13,6 +17,8 @@ public class Profile {
 	TeeShirtSize teeShirtSize;
 	
 	@Id String userId;
+	
+	private List<String> eventsToAttendKeys = new ArrayList(0);
 	
 	
     /**
@@ -71,10 +77,39 @@ public class Profile {
 		return this.userId;
 	}
 	
+	public List<String> getEventsToAttendKeys() {
+		return ImmutableList.copyOf(this.eventsToAttendKeys);
+	}
+	
 	/**
 	 * Just make the default constructor private
 	 */
 	private Profile(){
 		
 	}
+	
+	
+	
+	public void addToEventsToAttendKeys(String eventKey) {
+		eventsToAttendKeys.add(eventKey);
+	}
+	
+	
+	/**
+	 * Strongly consistent transaction that both unregisters the 
+	 * user from an event, and increments the number of the event's
+	 * openings by one
+	 */
+	private void unregisterFromEvent(String eventKey) {
+		
+		if (eventsToAttendKeys.contains(eventKey)) {
+			eventsToAttendKeys.remove(eventKey);
+		} else {
+			throw new IllegalArgumentException("Invalid event key: " + eventKey);
+		}
+	}
+	
+	
+	
+	
 }
