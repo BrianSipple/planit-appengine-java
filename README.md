@@ -4,6 +4,7 @@ Provides citizens with a mechanism to broadcast events (pick-up sports games, se
 
 Current AppEngine app is in early development and (intermittently) deployed at [planit-web.appsot.com](https://planit-web.appspot.com)
 
+An Android application is also being developed, which will be able to communicate with the same backend
 
 How to Use
 ----------
