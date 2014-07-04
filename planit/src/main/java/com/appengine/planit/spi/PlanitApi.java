@@ -22,6 +22,7 @@ import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.Query;
 
 /**
@@ -38,6 +39,7 @@ description = "API for the Conference Central Backend application.")
 public class PlanitApi {
 
 	public static final String EVENT_REGISTRATION_404 = "No Event found with key: ";
+	public static final String ALREADY_REGISTERED_ERROR = "Already registered";
 
 
 	/**
@@ -426,61 +428,65 @@ public class PlanitApi {
 		// Get the userId
 		String userId = user.getUserId();
 
-		WrappedBoolean result;
+		WrappedBoolean result = ofy().transact(new Work<WrappedBoolean>() {
 
-		// Start the transaction
-		try {
-			// Get the event key -- we can get it form the websafeEventKey
-			// Java will throw a fordidden exception if the key cannot be created
-			Key<Event> eventKey = Key.create(Event.class, websafeEventKey);
+			@Override
+			public WrappedBoolean run() {
+				try {
+					
+					// Get the event key -- we can get it form the websafeEventKey
+					// Java will throw a fordidden exception if the key cannot be created
+					Key<Event> eventKey = Key.create(Event.class, websafeEventKey);
 
-			// Get the event entity from the DataStore
-			Event event = ofy().load().key(eventKey).now();
+					// Get the event entity from the DataStore
+					Event event = ofy().load().key(eventKey).now();
 
-			// Throw a 404 if the event is not found
-			if (event == null) {
-				result = new WrappedBoolean(false, 
-						EVENT_REGISTRATION_404 + websafeEventKey);
+					// Throw a 404 if the event is not found
+					if (event == null) {
+						return new WrappedBoolean(false, 
+								EVENT_REGISTRATION_404 + websafeEventKey);
+					}
+
+					// Get the users profile from the DataStore
+					Profile profile = getProfileFromUser(user);
+
+					// Has the user already registered to this event?
+					if (profile.getEventsToAttendKeys().contains(websafeEventKey)) {
+						return new WrappedBoolean(false, ALREADY_REGISTERED_ERROR);
+					
+					// Is the event full?
+					} else if (event.getRegistrationsAvailable() <= 0) {
+						return new WrappedBoolean(false, "This event is already full");
+					
+					// Otherwise, we're all clear... let's sign up!
+					} else {
+
+						// Add the websafeEventKey to the Profile's eventsToAttendProperty
+						profile.addToEventsToAttendKeys(websafeEventKey);
+
+						// Decrease the event's registrations available
+						event.confirmRegistration(1);
+
+						// Save the event and profile entities in one unified transaction
+						ofy().save().entities(event, profile).now();
+
+						// We're booked!
+						return new WrappedBoolean(true, "Registration successfull");
+					}
+
+				} catch (Exception e) {
+					return new WrappedBoolean(false, "Unknown Exception");
+				}
 			}
-
-			// Get the users profile from the DataStore
-			Profile profile = getProfileFromUser(user);
-
-			// Has the user already registered to this event?
-			if (profile.getEventsToAttendKeys().contains(websafeEventKey)) {
-				result = new WrappedBoolean(false, "Already registered!");
-				// Is the event full?
-			} else if (event.getRegistrationsAvailable() <= 0) {
-				result = new WrappedBoolean(false, "This event is already full");
-
-			} else {
-				// All clear... let's sign up!
-
-				// Add the websafeEventKey to the Profile's eventsToAttendProperty
-				profile.addToEventsToAttendKeys(websafeEventKey);
-
-				// Decrease the event's registrations available
-				event.confirmRegistration(1);
-
-				// Save the event and profile entities in one unified transaction
-				ofy().save().entities(event, profile).now();
-
-				// We're booked!
-				result = new WrappedBoolean(true, "Registration successfull");
-			}
-
-		} catch (Exception e) {
-			result = new WrappedBoolean(false, "Unknown Exception");
-		}
-
+		});
 
 		// if result is false
 		if (!result.getResult()) {
 			if (result.getReason().contains(EVENT_REGISTRATION_404)) {
 				throw new NotFoundException(result.getReason());
 
-			} else if (result.getReason() == "Already registered!") {
-				throw new ConflictException("You have already registered!");
+			} else if (result.getReason().contains(ALREADY_REGISTERED_ERROR)) {
+				throw new ConflictException("You have already registered for this event!");
 
 			} else if (result.getReason() == "This event is already full") {
 				throw new ConflictException("This event is already full");
@@ -490,49 +496,49 @@ public class PlanitApi {
 			}
 		}
 		return result;
+}
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
+
+
+/**
+ * Get the display name from the user's email. For example, if the email is
+ * lemoncake@example.com, then the display name becomes "lemoncake."
+ */
+private static String extractDefaultDisplayNameFromEmail(String email) {
+	return email == null ? null : email.substring(0, email.indexOf("@"));
+}
+
+
+/**
+ * Gets the Profile entity for the current user
+ * or creates it if it doesn't exist
+ * @param user
+ * @return user's Profile
+ */
+private static Profile getProfileFromUser(User user) {
+	// First fetch the user's Profile from the datastore.
+	Profile profile = ofy().load().key(
+			Key.create(Profile.class, user.getUserId())).now();
+	if (profile == null) {
+		// Create a new Profile if it doesn't exist.
+		// Use default displayName and teeShirtSize
+		String email = user.getEmail();
+		profile = new Profile(user.getUserId(),
+				extractDefaultDisplayNameFromEmail(email), email, 0, TeeShirtSize.NOT_SPECIFIED);
 	}
-
-
-
-
-
-
-
-
-
-
-
-	///////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
-
-
-	/**
-	 * Get the display name from the user's email. For example, if the email is
-	 * lemoncake@example.com, then the display name becomes "lemoncake."
-	 */
-	private static String extractDefaultDisplayNameFromEmail(String email) {
-		return email == null ? null : email.substring(0, email.indexOf("@"));
-	}
-
-
-	/**
-	 * Gets the Profile entity for the current user
-	 * or creates it if it doesn't exist
-	 * @param user
-	 * @return user's Profile
-	 */
-	private static Profile getProfileFromUser(User user) {
-		// First fetch the user's Profile from the datastore.
-		Profile profile = ofy().load().key(
-				Key.create(Profile.class, user.getUserId())).now();
-		if (profile == null) {
-			// Create a new Profile if it doesn't exist.
-			// Use default displayName and teeShirtSize
-			String email = user.getEmail();
-			profile = new Profile(user.getUserId(),
-					extractDefaultDisplayNameFromEmail(email), email, 0, TeeShirtSize.NOT_SPECIFIED);
-		}
-		return profile;
-	}
+	return profile;
+}
 
 }
 

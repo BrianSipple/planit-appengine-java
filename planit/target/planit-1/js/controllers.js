@@ -295,7 +295,8 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
         {enumValue: 'CITY', displayName: 'City'},
         {enumValue: 'CATEGORY', displayName: 'Category'},
         {enumValue: 'MONTH', displayName: 'Start month'},
-        {enumValue: 'MAX_ATTENDEES', displayName: 'Max Attendees'}
+        {enumValue: 'MAX_ATTENDEES', displayName: 'Max Attendees'},
+        {enumValue: 'ATTENDEES', displayName: 'Attendees'}
     ]
 
     /**
@@ -313,7 +314,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     ];
 
     /**
-     * Holds the conferences currently displayed in the page.
+     * Holds the events currently displayed in the page.
      * @type {Array}
      */
     $scope.events = [];
@@ -449,7 +450,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     };
 
     /**
-     * Invokes the event.queryConferences API.
+     * Invokes the event.queryEvents API.
      */
     $scope.queryEventsAll = function () {
         var sendFilters = {
