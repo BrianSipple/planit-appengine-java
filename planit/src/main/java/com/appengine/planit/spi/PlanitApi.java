@@ -3,6 +3,7 @@ package com.appengine.planit.spi;
 import static com.appengine.planit.service.OfyService.ofy;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.appengine.planit.Constants;
@@ -38,8 +39,9 @@ description = "API for the Conference Central Backend application.")
 
 public class PlanitApi {
 
-	public static final String EVENT_REGISTRATION_404 = "No Event found with key: ";
-	public static final String ALREADY_REGISTERED_ERROR = "Already registered";
+	public static final String EVENT_NOT_FOUND_ERROR = "No Event found with key: ";
+	public static final String ALREADY_REGISTERED_ERROR = "Already registered: ";
+	public static final String NOT_REGISTERED_ERROR = "Not currently registered: ";
 
 
 	/**
@@ -433,7 +435,7 @@ public class PlanitApi {
 			@Override
 			public WrappedBoolean run() {
 				try {
-					
+
 					// Get the event key -- we can get it form the websafeEventKey
 					// Java will throw a fordidden exception if the key cannot be created
 					Key<Event> eventKey = Key.create(Event.class, websafeEventKey);
@@ -444,7 +446,7 @@ public class PlanitApi {
 					// Throw a 404 if the event is not found
 					if (event == null) {
 						return new WrappedBoolean(false, 
-								EVENT_REGISTRATION_404 + websafeEventKey);
+								EVENT_NOT_FOUND_ERROR + websafeEventKey);
 					}
 
 					// Get the users profile from the DataStore
@@ -453,12 +455,12 @@ public class PlanitApi {
 					// Has the user already registered to this event?
 					if (profile.getEventsToAttendKeys().contains(websafeEventKey)) {
 						return new WrappedBoolean(false, ALREADY_REGISTERED_ERROR);
-					
-					// Is the event full?
+
+						// Is the event full?
 					} else if (event.getRegistrationsAvailable() <= 0) {
 						return new WrappedBoolean(false, "This event is already full");
-					
-					// Otherwise, we're all clear... let's sign up!
+
+						// Otherwise, we're all clear... let's sign up!
 					} else {
 
 						// Add the websafeEventKey to the Profile's eventsToAttendProperty
@@ -482,7 +484,7 @@ public class PlanitApi {
 
 		// if result is false
 		if (!result.getResult()) {
-			if (result.getReason().contains(EVENT_REGISTRATION_404)) {
+			if (result.getReason().contains(EVENT_NOT_FOUND_ERROR)) {
 				throw new NotFoundException(result.getReason());
 
 			} else if (result.getReason().contains(ALREADY_REGISTERED_ERROR)) {
@@ -496,49 +498,164 @@ public class PlanitApi {
 			}
 		}
 		return result;
-}
-
-
-
-
-
-
-
-
-
-
-
-///////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
-
-
-/**
- * Get the display name from the user's email. For example, if the email is
- * lemoncake@example.com, then the display name becomes "lemoncake."
- */
-private static String extractDefaultDisplayNameFromEmail(String email) {
-	return email == null ? null : email.substring(0, email.indexOf("@"));
-}
-
-
-/**
- * Gets the Profile entity for the current user
- * or creates it if it doesn't exist
- * @param user
- * @return user's Profile
- */
-private static Profile getProfileFromUser(User user) {
-	// First fetch the user's Profile from the datastore.
-	Profile profile = ofy().load().key(
-			Key.create(Profile.class, user.getUserId())).now();
-	if (profile == null) {
-		// Create a new Profile if it doesn't exist.
-		// Use default displayName and teeShirtSize
-		String email = user.getEmail();
-		profile = new Profile(user.getUserId(),
-				extractDefaultDisplayNameFromEmail(email), email, 0, TeeShirtSize.NOT_SPECIFIED);
 	}
-	return profile;
-}
+
+
+	/**
+	 * Retrieves all events that the user is set to attend
+	 * @throws UnauthorizedException 
+	 */
+	@ApiMethod(
+			name = "getEventsToAttend",
+			path = "events/{websafeEventKey}",
+			httpMethod = HttpMethod.POST			
+			)
+	public Collection<Event> getEventsToAttend(User user) 
+			throws UnauthorizedException, NotFoundException {
+
+		if (user == null) {
+			throw new UnauthorizedException("Authorization required!");
+		}
+
+		// Get the user's profile
+		Profile profile = getProfileFromUser(user);
+
+		if (profile == null) {
+			throw new NotFoundException("User not found");
+		}
+
+		// Get the keys for all events to which user is registered 
+		List<String> eventsToAttendKeyStrings = profile.getEventsToAttendKeys();
+
+		// Make a list of actual Key objects from the Key Strings
+		List<Key<Event>> eventKeys = new ArrayList();
+
+		for (String eventKeyString : eventsToAttendKeyStrings) {
+			eventKeys.add(Key.create(Event.class, eventKeyString));
+		}
+
+		// Now that we have  a list of key objects, load the Events from it to 
+		// build the Event collection
+		Collection<Event> eventCollection = ofy().load().keys(eventKeys).values();
+
+		return eventCollection;
+
+	}
+
+	/**
+     * Unregister from the specified Event.
+     *
+     * @param user An user who invokes this method, null when the user is not signed in.
+     * @param websafeConferenceKey The String representation of the Event Key 
+     * to unregister from.
+     * @return Boolean true when success, otherwise false.
+     * @throws UnauthorizedException when the user is not signed in.
+     * @throws NotFoundException when there is no Event with the given eventId.
+     */
+	@ApiMethod(
+			name = "unregisterFromEvent",
+			path = "event/{websafeEventKey}/registration",
+			httpMethod = HttpMethod.DELETE			
+			)
+	public WrappedBoolean unRegisterFromEvent(User user, 
+			@Named("websafeEventKey") final String websafeEventKey) throws
+			UnauthorizedException, NotFoundException, ForbiddenException, ConflictException {
+
+		if (user == null) {
+			throw new UnauthorizedException("Authorization required");
+		}
+
+
+		WrappedBoolean result = ofy().transact(new Work<WrappedBoolean>() {
+
+			@Override
+			public WrappedBoolean run() {
+				try {
+
+					Key<Event> eventKey = Key.create(Event.class, websafeEventKey);
+
+					Event event = ofy().load().key(eventKey).now();
+
+					if (event == null) {
+						return new WrappedBoolean(false, EVENT_NOT_FOUND_ERROR);
+					}
+
+					Profile profile = getProfileFromUser(user);
+
+					if (!profile.getEventsToAttendKeys().contains(websafeEventKey)) {
+						return new WrappedBoolean(false, NOT_REGISTERED_ERROR);
+					}
+
+					// If they're already registered, well, no need to check the number of 
+					// available registrations.
+
+					// So... we have the user,.. they're signed up for the event... now we 
+					// make the changes!
+
+					profile.unregisterFromEvent(websafeEventKey);
+
+					event.giveBackRegistrations(1);
+
+					return new WrappedBoolean(true, "Registration succueesfully removed");
+
+				} catch (Exception e) {
+					return new WrappedBoolean(false, "Unknown exception");
+				}
+			}
+		});
+		
+		// if result is false
+		if (!result.getResult()) {
+			if (result.getReason().contains(EVENT_NOT_FOUND_ERROR)) {
+				throw new NotFoundException(result.getReason());
+
+			} else if (result.getReason().contains(NOT_REGISTERED_ERROR)) {
+				throw new ConflictException("You haven't even registered for this event!");
+			} else {
+				throw new ForbiddenException("Unknown exception");
+			}
+		}
+		return result;
+	}
+	
+
+
+
+
+
+
+
+	///////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
+
+
+	/**
+	 * Get the display name from the user's email. For example, if the email is
+	 * lemoncake@example.com, then the display name becomes "lemoncake."
+	 */
+	private static String extractDefaultDisplayNameFromEmail(String email) {
+		return email == null ? null : email.substring(0, email.indexOf("@"));
+	}
+
+
+	/**
+	 * Gets the Profile entity for the current user
+	 * or creates it if it doesn't exist
+	 * @param user
+	 * @return user's Profile
+	 */
+	private static Profile getProfileFromUser(User user) {
+		// First fetch the user's Profile from the datastore.
+		Profile profile = ofy().load().key(
+				Key.create(Profile.class, user.getUserId())).now();
+		if (profile == null) {
+			// Create a new Profile if it doesn't exist.
+			// Use default displayName and teeShirtSize
+			String email = user.getEmail();
+			profile = new Profile(user.getUserId(),
+					extractDefaultDisplayNameFromEmail(email), email, 0, TeeShirtSize.NOT_SPECIFIED);
+		}
+		return profile;
+	}
 
 }
 

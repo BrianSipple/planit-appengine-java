@@ -100,7 +100,7 @@ public class Profile {
 	 * user from an event, and increments the number of the event's
 	 * openings by one
 	 */
-	private void unregisterFromEvent(String eventKey) {
+	public void unregisterFromEvent(String eventKey) {
 		
 		if (eventsToAttendKeys.contains(eventKey)) {
 			eventsToAttendKeys.remove(eventKey);
@@ -108,8 +108,7 @@ public class Profile {
 			throw new IllegalArgumentException("Invalid event key: " + eventKey);
 		}
 	}
-	
-	
+
 	
 	
 	
