@@ -133,7 +133,7 @@ public class Event {
 	 * The name of the zip code where the event takes place
 	 */
 	@Index
-	private String zipCode;
+	private String zip;
 
 	
 	//private Photo mainPhoto;
