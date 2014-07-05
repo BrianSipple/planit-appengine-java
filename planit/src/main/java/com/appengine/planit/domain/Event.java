@@ -259,8 +259,8 @@ public class Event {
 		return state;
 	}
 
-	public String getZipCode() {
-		return zipCode;
+	public String getZip() {
+		return zip;
 	}
 	
 	
@@ -306,7 +306,7 @@ public class Event {
 		this.address2 = eventForm.getAddress2() == null ? null : eventForm.getAddress2();
 		this.city = eventForm.getCity() == null ? DEFAULT_CITY : eventForm.getCity();
 		this.state = eventForm.getState() == null ? null : eventForm.getState();
-		this.zipCode = eventForm.getZipCode() == null ? null : eventForm.getZipCode();
+		this.zip = eventForm.getZip() == null ? null : eventForm.getZip();
 
 	}
 	
@@ -353,8 +353,8 @@ public class Event {
 		if (state != null) {
 			stringBuilder.append("State: ").append(state).append("\n");
 		}
-		if (zipCode != null) {
-			stringBuilder.append("Zip Code: ").append(zipCode).append("\n");
+		if (zip != null) {
+			stringBuilder.append("Zip Code: ").append(zip).append("\n");
 		}
 		stringBuilder.append("Max Attendees: ").append(maxAttendees).append("\n");
 		

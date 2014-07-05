@@ -77,7 +77,7 @@ public class EventTest {
 		categories.add("Google Cloud Platform");
 		
 		eventForm = new EventForm(TITLE, startDate, endDate, DESCRIPTION, 
-				categories, ORGANIZER_USER_ID, ATTENDEES, MAX_ATTENDEES, registrationsAvailable, 
+				categories, ORGANIZER_USER_ID, ATTENDEES, MAX_ATTENDEES, 
 				address1, address2, CITY, STATE, ZIP);
 		
 		
@@ -91,7 +91,7 @@ public class EventTest {
 	@Test(expected = NullPointerException.class)
 		public void testNullName() throws Exception {
 			EventForm nullEventForm = new EventForm(null, startDate, endDate, DESCRIPTION, 
-				categories, ORGANIZER_USER_ID, ATTENDEES, MAX_ATTENDEES, registrationsAvailable, 
+				categories, ORGANIZER_USER_ID, ATTENDEES, MAX_ATTENDEES, 
 				address1, address2, CITY, STATE, ZIP);
 			
 			new Event(ID, ORGANIZER_USER_ID, nullEventForm);
@@ -114,10 +114,11 @@ public class EventTest {
 		assertEquals(CITY, event.getCity());
 		assertEquals(STATE, event.getState());
 		assertEquals(ZIP, event.getZip());
+	    // Test if they are defensive copies.
+        assertNotSame(categories, event.getCategories());
+        assertNotSame(startDate, event.getStartDate());
+        assertNotSame(endDate, event.getEndDate());
 	}
-	
-	
-	
 	
 	
 }

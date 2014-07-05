@@ -23,8 +23,6 @@ public class EventForm {
     
     private int maxAttendees;
     
-    private int registrationsAvailable;
-    
     private String address1;
     
     private String address2;
@@ -33,7 +31,7 @@ public class EventForm {
     
     private String state;
     
-    private String zipCode;
+    private String zip;
 
     private EventForm() {
 
@@ -49,17 +47,15 @@ public class EventForm {
      * @param organizer
      * @param attendees
      * @param maxAttendees
-     * @param registrationsAvailable
      * @param address1
      * @param address2
      * @param city
      * @param state
-     * @param zipCode
+     * @param zip
      */
     public EventForm(String title, Date startDate, Date endDate, 
     	String description, List<String> categories, String organizerUserId,
-    	int attendees, int maxAttendees, int registrationsAvailable,
-    	String address1, String address2, String city, String state, String zipCode) {
+    	int attendees, int maxAttendees, String address1, String address2, String city, String state, String zip) {
 
     	this.title = title;
     	this.startDate = startDate == null ? null : new Date(startDate.getTime());
@@ -69,12 +65,11 @@ public class EventForm {
     	this.organizerUserId = organizerUserId;
     	this.attendees = attendees;
     	this.maxAttendees = maxAttendees;
-    	this.registrationsAvailable = registrationsAvailable;
     	this.address1 = address1;
     	this.address2 = address2;
     	this.city = city;
     	this.state = state;
-    	this.zipCode = zipCode;
+    	this.zip = zip;
     }
     
     ////////// GETTTERS and SETTERS //////////
@@ -114,9 +109,6 @@ public class EventForm {
 		return maxAttendees;
 	}
 
-	public int getRegistrationsAvailable() {
-		return registrationsAvailable;
-	}
 
 	public String getAddress1() {
 		return address1;
@@ -134,8 +126,8 @@ public class EventForm {
 		return state;
 	}
 
-	public String getZipCode() {
-		return zipCode;
+	public String getZip() {
+		return zip;
 	}
     
   
