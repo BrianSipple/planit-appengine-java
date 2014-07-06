@@ -557,7 +557,7 @@ public class PlanitApi {
 			path = "event/{websafeEventKey}/registration",
 			httpMethod = HttpMethod.DELETE			
 			)
-	public WrappedBoolean unRegisterFromEvent(User user, 
+	public WrappedBoolean unRegisterFromEvent(final User user, 
 			@Named("websafeEventKey") final String websafeEventKey) throws
 			UnauthorizedException, NotFoundException, ForbiddenException, ConflictException {
 

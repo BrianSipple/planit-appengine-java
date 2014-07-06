@@ -44,9 +44,9 @@ public class EventTest {
 	
 	private int registrationsAvailable;
 	
-	private String address1;
+	private final static String address1 = "";
 	
-	private String address2;
+	private final static String address2 = "";
 	
 	private static final String CITY = "San Francisco";
 	
@@ -120,5 +120,45 @@ public class EventTest {
         assertNotSame(endDate, event.getEndDate());
 	}
 	
+	@Test
+	public void getOrganizerDisplayName() throws Exception {
+		String displayName = "Eric Schmidt";
+		Profile profile = new Profile(ORGANIZER_USER_ID, displayName, "", 59, null);
+		ofy().save().entity(profile).now();
+		Event event = new Event(ID, ORGANIZER_USER_ID, eventForm);
+		assertEquals(displayName, event.getOrganizerDisplayName());
+	}
+	
+	@Test
+	public void testMakeRegistration() throws Exception {
+		Event event = new Event(ID, ORGANIZER_USER_ID, eventForm);
+		event.confirmRegistration(1);
+		assertEquals(registrationsAvailable - 1, event.getRegistrationsAvailable());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testMakeRegistrationFailure() throws Exception {
+		Event event = new Event(ID, ORGANIZER_USER_ID, eventForm);
+		event.confirmRegistration(MAX_ATTENDEES - ATTENDEES);  // take up the remaining openings
+		assertEquals(0, event.getRegistrationsAvailable());
+		// This will fail...
+		event.confirmRegistration(1);
+	}
+	
+	@Test
+	public void testReturnRegistration() throws Exception {
+		Event event = new Event(ID, ORGANIZER_USER_ID, eventForm);
+		event.confirmRegistration(1);
+		assertEquals((MAX_ATTENDEES - ATTENDEES) - 1, event.getRegistrationsAvailable());
+		event.giveBackRegistrations(1);
+		assertEquals((MAX_ATTENDEES - ATTENDEES) + 1, event.getRegistrationsAvailable());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testReturnRegistrationFailure() {
+		Event event = new Event(ID, ORGANIZER_USER_ID, eventForm);
+		event.giveBackRegistrations(MAX_ATTENDEES + 1);  // give back one more registration than could ever be alloted... this will always fail 
+		
+	}
 	
 }
