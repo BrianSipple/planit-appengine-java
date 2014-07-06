@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="10" failures="0" name="com.appengine.planit.spi.EventApiGlobalQueryTest" time="0.488" errors="0" skipped="0">
+<testsuite tests="10" failures="0" name="com.appengine.planit.spi.EventApiGlobalQueryTest" time="0.761" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_05.jdk/Contents/Home/jre/lib"/>
@@ -25,7 +25,7 @@
 "/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/BrianSipple/Dropbox/Development/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf780638893113983968.tmp"/>
+    <property name="classworlds.conf" value="/Users/BrianSipple/Dropbox/Development/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf3430673059667193585.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/BrianSipple/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -43,7 +43,7 @@
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_05.jdk/Contents/Home/jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B appengine:devserver"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B appengine:update"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
@@ -59,14 +59,14 @@
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testEmptyQuery" time="0.169"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testCityQuery" time="0.074"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesGT" time="0.078"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesLT" time="0.023"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesNE" time="0.049"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testTopicsQuery" time="0.023"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMultipleInequalityFilter" time="0.016"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testComplexQuery" time="0.022"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesGTEQ" time="0.017"/>
-  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesLTEQ" time="0.017"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testEmptyQuery" time="0.3"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testCityQuery" time="0.084"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesGT" time="0.047"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesLT" time="0.114"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesNE" time="0.061"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testTopicsQuery" time="0.04"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMultipleInequalityFilter" time="0.018"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testComplexQuery" time="0.036"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesGTEQ" time="0.024"/>
+  <testcase classname="com.appengine.planit.spi.EventApiGlobalQueryTest" name="testMaxAttendeesLTEQ" time="0.037"/>
 </testsuite>
