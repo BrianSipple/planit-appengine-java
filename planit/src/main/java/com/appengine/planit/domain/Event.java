@@ -1,16 +1,18 @@
 package com.appengine.planit.domain;
 
-import java.util.List;
+import static com.appengine.planit.service.OfyService.ofy;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-import static com.appengine.planit.service.OfyService.ofy;
 import com.appengine.planit.form.EventForm;
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -23,6 +25,7 @@ import com.googlecode.objectify.condition.IfNotDefault;
  *
  */
 @Entity
+@Cache
 public class Event {
 
 	private static final String DEFAULT_CITY = "default city";
@@ -291,16 +294,18 @@ public class Event {
 		
 		//this.organizerUserId = eventForm.getOrganizer().getUserId().toString();
 		
-		// Check maxAttendees value against the number of already allocated seats.
-		attendees = maxAttendees - registrationsAvailable;
+        // The initial number of seatsAvailable is the same as maxAttendees.
+        // However, if there are already some seats allocated, we should subtract that numbers.
+		this.maxAttendees = eventForm.getMaxAttendees();
+		this.attendees = eventForm.getAttendees();
+		
 		if (eventForm.getMaxAttendees() < attendees) {
 			throw new IllegalArgumentException(attendees + "attendees spots are already taken," +
 					"but you tried to set maxAttendees to " + eventForm.getMaxAttendees());
 		}
-        // The initial number of seatsAvailable is the same as maxAttendees.
-        // However, if there are already some seats allocated, we should subtract that numbers.
-		this.maxAttendees = eventForm.getMaxAttendees();
+		
 		this.registrationsAvailable = this.maxAttendees - attendees;
+
 		
 		this.address1 = eventForm.getAddress1() == null ? null : eventForm.getAddress1();
 		this.address2 = eventForm.getAddress2() == null ? null : eventForm.getAddress2();

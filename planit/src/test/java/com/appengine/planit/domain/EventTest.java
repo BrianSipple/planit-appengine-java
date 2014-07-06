@@ -40,7 +40,7 @@ public class EventTest {
 	
 	private static final int MAX_ATTENDEES = 3000;
 	
-	private int ATTENDEES = 100;
+	private static final int ATTENDEES = 100;
 	
 	private int registrationsAvailable;
 	
@@ -151,7 +151,7 @@ public class EventTest {
 		event.confirmRegistration(1);
 		assertEquals((MAX_ATTENDEES - ATTENDEES) - 1, event.getRegistrationsAvailable());
 		event.giveBackRegistrations(1);
-		assertEquals((MAX_ATTENDEES - ATTENDEES) + 1, event.getRegistrationsAvailable());
+		assertEquals((MAX_ATTENDEES - ATTENDEES), event.getRegistrationsAvailable());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)

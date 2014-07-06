@@ -124,6 +124,7 @@ public class EventQueryForm {
 	 */
 	private List<Filter> filters = new ArrayList<>(0);
 
+	
 	/**
 	 * Holds the first inequalityFilter for checking the feasibility of the whole query.
 	 */
@@ -167,7 +168,7 @@ public class EventQueryForm {
      */
 	public EventQueryForm filter(Filter filter) {
 		if (filter.operator.isInequalityFilter()) { //danger zone
-			if (inequalityFilter != null && !filter.field.equals(filter.field)) {
+			if (inequalityFilter != null && !inequalityFilter.field.equals(filter.field)) {
 				throw new IllegalArgumentException(
 						"Inequality filter is allowed on only one field");
 			}

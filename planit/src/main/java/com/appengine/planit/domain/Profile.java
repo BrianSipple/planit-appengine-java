@@ -5,10 +5,12 @@ import java.util.List;
 
 import com.appengine.planit.form.ProfileForm.TeeShirtSize;
 import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableList;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
 @Entity
+@Cache
 public class Profile {
 	
 	String displayName;
