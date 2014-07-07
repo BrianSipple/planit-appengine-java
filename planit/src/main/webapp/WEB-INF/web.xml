@@ -29,7 +29,7 @@
 	</security-constraint>
 
 	<servlet>
-		<servlet-name>SetAnnoncementServlet</servlet-name>
+		<servlet-name>SetAnnouncementServlet</servlet-name>
 		<servlet-class>com.appengine.planit.servlet.SetAnnouncementServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>

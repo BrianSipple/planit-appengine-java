@@ -36,6 +36,9 @@ var app = angular.module('planitApp',
 				.when('/', {
 					templateUrl: '/partials/home.html'
 				})
+				.when('/tasks/send_confirmation_email', {
+					controller: 'ConfirmationEmailCtrl'
+				})
 				.otherwise({
 					redirectTo: '/'
 				});

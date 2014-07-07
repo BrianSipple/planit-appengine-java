@@ -269,6 +269,24 @@ planitApp.controllers.controller('CreateEventCtrl',
 
 /**
  * @ngdoc controller
+ * @name ConfirmationEmailCtrl
+ *
+ * @description
+ * A controller used for the background task of sending a confirmation email to 
+ * the user once they create an event
+ */
+planitApp.controllers.controller('ConfirmationEmailCtrl',
+	function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
+	
+	
+	
+	
+	
+});
+
+
+/**
+ * @ngdoc controller
  * @name ShowEventCtrl
  *
  * @description

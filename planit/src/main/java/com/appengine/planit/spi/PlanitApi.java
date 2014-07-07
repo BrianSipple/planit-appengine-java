@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.appengine.planit.Constants;
+import com.appengine.planit.domain.Announcement;
 import com.appengine.planit.domain.Event;
 import com.appengine.planit.domain.Profile;
 import com.appengine.planit.form.EventForm;
@@ -21,6 +22,11 @@ import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.ForbiddenException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Work;
@@ -130,7 +136,11 @@ public class PlanitApi {
 	 * @throws UnauthorizedException
 	 *             when the User object is null.
 	 */
-	@ApiMethod(name = "getProfile", path = "profile", httpMethod = HttpMethod.GET)
+	@ApiMethod(
+			name = "getProfile", 
+			path = "profile", 
+			httpMethod = HttpMethod.GET
+		)
 	public Profile getProfile(final User user) throws UnauthorizedException {
 		if (user == null) {
 			throw new UnauthorizedException("Authorization required");
@@ -143,81 +153,57 @@ public class PlanitApi {
 		return profile;
 	}
 
-	/*
-	@ApiMethod(name = "saveEvent", path = "event", httpMethod= HttpMethod.POST)
-	public Event saveEvent(final User user, EventForm eventForm) throws UnauthorizedException {
-		if (user == null) {
-			throw new UnauthorizedException("Authentication required");
-		}
-
-		String userId = null;
-		String title = null;
-		Date startDate = null;
-		Date endDate = null;
-		String description = null;
-		List<String> categories = null;
-		User organizer = null;
-		List<User> attendees = null;
-		int maxAttendees = 0;
-		int registrationsAvailable = 0;
-		String address1 = null;
-		String address2 = null;
-		String city =  null;
-		String state = null;
-		String zipCode = null;
-
-	}
-
-	 */
-
-
 	/**
 	 * Creates a new Event object and stores it to the datastore.
 	 *
 	 * @param user A user who invokes this method, null when the user is not signed in.
 	 * @param eventForm A EventForm object representing user's inputs.
-	 * @return A newly created Even Object.
+	 * @return A newly created Event Object.
 	 * @throws UnauthorizedException when the user is not signed in.
 	 */
-	@ApiMethod(name = "createEvent", path = "event", httpMethod = HttpMethod.POST)
+	@ApiMethod(
+			name = "createEvent",
+			path = "event",
+			httpMethod = HttpMethod.POST
+		)
 	public Event createEvent(final User user, final EventForm eventForm)
 			throws UnauthorizedException {
+		
 		if (user == null) {
 			throw new UnauthorizedException("Authorization required");
 		}
 
-		// TODO (Lesson 4)
-		// Get the userId of the logged in User
+		// Get the parameters we'll need to use our Profile and Event entities
 		String userId = user.getUserId();
-
-		// TODO (Lesson 4)
-		// Get the key for the User's Profile
 		Key<Profile> profileKey = Key.create(Profile.class, userId);
-
-		// TODO (Lesson 4)
-		// Allocate a key for the event -- let App Engine allocate the ID
-		// Don't forget to include the parent Profile in the allocated ID
 		final Key<Event> eventKey = ofy().factory().allocateId(profileKey, Event.class);
-
-		// TODO (Lesson 4)
-		// Get the Event Id from the Key
 		final long eventId = eventKey.getId();
-
-		// TODO (Lesson 4)
-		// Get the existing Profile entity for the current user if there is one
-		// Otherwise create a new Profile entity with default values
-		Profile profile = getProfileFromUser(user);
-
-		// TODO (Lesson 4)
-		// Create a new Event Entity, specifying the user's Profile entity
-		// as the parent of the event
-		Event event = new Event(eventId, eventKey.toString(), eventForm);
-
-		// TODO (Lesson 4)
-		// Save Event and Profile Entities
-		ofy().save().entities(profile, event).now();
-
-
+		
+		// Build the queue that we'll use for adding a background task to
+		final Queue queue = QueueFactory.getQueue("email-queue");
+		
+		// Being a transaction, adding our task of sending a confirmatiom email to the queue
+		Event event = ofy().transact(new Work<Event>() {
+			
+			@Override
+			public Event run() {
+				
+				// Get our two main entities: The user's profile and the Event
+				Profile profile = getProfileFromUser(user);
+				Event event = new Event(eventId, eventKey.toString(), eventForm);
+				
+				// Save the event and the profile
+				ofy().save().entities(profile, event).now();
+				
+				// Add the task of sending a confirmation email to the queue
+				// Options include the URL for sending the task, and any additional params for the task
+				queue.add(ofy().getTransaction(), // Objectify gets the current transaction
+						TaskOptions.Builder.withUrl("/tasks/send_confirmation_email")
+							.param("email", profile.getMainEmail())
+							.param("eventInfo", event.toString()));
+				return event;	
+			}
+		});
 		return event;
 	}
 
@@ -237,7 +223,7 @@ public class PlanitApi {
 	 */
 	@ApiMethod (
 			name="queryEvents", 
-			path="queryEvents", 
+			path="event", 
 			httpMethod = HttpMethod.POST
 			)
 	public List<Event> queryEvents(EventQueryForm eventQueryForm) {
@@ -257,11 +243,7 @@ public class PlanitApi {
 		ofy().load().keys(organizersKeyList);
 
 		return result;
-
-
-
-
-
+		
 	}
 
 
@@ -274,7 +256,7 @@ public class PlanitApi {
 	 */
 	@ApiMethod (
 			name = "queryEventsCreated",
-			path= "queryEventsCreated",
+			path= "event",
 			httpMethod = HttpMethod.POST
 			)
 	public List<Event> queryEventsCreated(User user, EventQueryForm eventQueryForm) throws UnauthorizedException {
@@ -303,9 +285,11 @@ public class PlanitApi {
 	 * @param orderBy
 	 * @return
 	 */
-	@ApiMethod (name="queryEventsAndOrder", 
-			path="queryEventsAndOrder", 
-			httpMethod = HttpMethod.POST)
+	@ApiMethod (
+			name="queryEventsAndOrder", 
+			path="event", 
+			httpMethod = HttpMethod.POST
+		)
 	public List<Event> queryEventsAndOrder(String orderBy) {
 
 		Query<Event> query = ofy().load().type(Event.class).order(orderBy);
@@ -324,9 +308,11 @@ public class PlanitApi {
 	 * @param value
 	 * @return
 	 */
-	@ApiMethod (name="queryEventsAndFilter", 
-			path="queryEventsAndFilter", 
-			httpMethod = HttpMethod.POST)
+	@ApiMethod (
+			name="queryEventsAndFilter", 
+			path="event", 
+			httpMethod = HttpMethod.POST
+		)
 	public List<Event> queryEventsAndFilter(String property, String operator, String value) {
 
 		String propertyAndOperator = property + " " + operator;
@@ -348,9 +334,9 @@ public class PlanitApi {
 	 */
 	@ApiMethod(
 			name="queryEventsCustomFilter",
-			path="queryEventsCustomFilter",
+			path="event",
 			httpMethod = HttpMethod.POST
-			)
+		)
 	public List<Event> queryEventsCustomFilter() {
 
 		Query<Event> query = ofy().load().type(Event.class)
@@ -415,7 +401,7 @@ public class PlanitApi {
 	 */
 	@ApiMethod(
 			name="registerForEvent",
-			path="registerForEvent",
+			path="event",
 			httpMethod = HttpMethod.POST
 			)
 	public WrappedBoolean registerForEvent(final User user, 
@@ -619,11 +605,30 @@ public class PlanitApi {
 	}
 	
 
+	/////////////////////// MEMCACHING METHODS //////////////////
+	
+	@ApiMethod(
+			name = "getAnnouncement",
+			path = "announcement",
+			httpMethod = HttpMethod.GET
+		)
+	public Announcement getAnnoncement() {	
+		
+		// Connect to a memcache service
+		MemcacheService memcacheService = MemcacheServiceFactory.getMemcacheService();
+		
+		// Query memcache for the announcement message, which would have been stored with our Constant
+		Object message = memcacheService.get(Constants.MEMCACHE_ANNOUNCEMENTS_KEY);
 
-
-
-
-
+		// If we get something, that's our announcement talking. We need to construct it by passing
+		// in the message's String.
+		if (message != null) {
+			return new Announcement(message.toString());
+		}
+		
+		return null;
+		
+	}
 
 	///////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
 
