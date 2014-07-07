@@ -35,13 +35,15 @@ import com.googlecode.objectify.cmd.Query;
 /**
  * Defines planit APIs
  */
-@Api(name = "planit",
-version = "v1",
-scopes = { Constants.EMAIL_SCOPE }, 
-clientIds = {
-		Constants.WEB_CLIENT_ID, Constants.API_EXPLORER_CLIENT_ID		// specifies what clientIds we want to respond to (i.e., allow to use our application)
-},
-description = "API for the Conference Central Backend application.")
+@Api(
+		name = "planit",
+		version = "v1",
+		scopes = { Constants.EMAIL_SCOPE }, 
+		clientIds = { Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID,
+				Constants.API_EXPLORER_CLIENT_ID },					// specifies what clientIds we want to respond to (i.e., allow to use our application)
+				audiences = { Constants.ANDROID_AUDIENCE },
+				description = "API for the Conference Central Backend application."
+		)
 
 public class PlanitApi {
 
@@ -140,7 +142,7 @@ public class PlanitApi {
 			name = "getProfile", 
 			path = "profile", 
 			httpMethod = HttpMethod.GET
-		)
+			)
 	public Profile getProfile(final User user) throws UnauthorizedException {
 		if (user == null) {
 			throw new UnauthorizedException("Authorization required");
@@ -165,10 +167,10 @@ public class PlanitApi {
 			name = "createEvent",
 			path = "event",
 			httpMethod = HttpMethod.POST
-		)
+			)
 	public Event createEvent(final User user, final EventForm eventForm)
 			throws UnauthorizedException {
-		
+
 		if (user == null) {
 			throw new UnauthorizedException("Authorization required");
 		}
@@ -178,29 +180,29 @@ public class PlanitApi {
 		Key<Profile> profileKey = Key.create(Profile.class, userId);
 		final Key<Event> eventKey = ofy().factory().allocateId(profileKey, Event.class);
 		final long eventId = eventKey.getId();
-		
+
 		// Build the queue that we'll use for adding a background task to
 		final Queue queue = QueueFactory.getQueue("email-queue");
-		
+
 		// Being a transaction, adding our task of sending a confirmatiom email to the queue
 		Event event = ofy().transact(new Work<Event>() {
-			
+
 			@Override
 			public Event run() {
-				
+
 				// Get our two main entities: The user's profile and the Event
 				Profile profile = getProfileFromUser(user);
 				Event event = new Event(eventId, eventKey.toString(), eventForm);
-				
+
 				// Save the event and the profile
 				ofy().save().entities(profile, event).now();
-				
+
 				// Add the task of sending a confirmation email to the queue
 				// Options include the URL for sending the task, and any additional params for the task
 				queue.add(ofy().getTransaction(), // Objectify gets the current transaction
 						TaskOptions.Builder.withUrl("/tasks/send_confirmation_email")
-							.param("email", profile.getMainEmail())
-							.param("eventInfo", event.toString()));
+						.param("email", profile.getMainEmail())
+						.param("eventInfo", event.toString()));
 				return event;	
 			}
 		});
@@ -243,7 +245,7 @@ public class PlanitApi {
 		ofy().load().keys(organizersKeyList);
 
 		return result;
-		
+
 	}
 
 
@@ -289,7 +291,7 @@ public class PlanitApi {
 			name="queryEventsAndOrder", 
 			path="event", 
 			httpMethod = HttpMethod.POST
-		)
+			)
 	public List<Event> queryEventsAndOrder(String orderBy) {
 
 		Query<Event> query = ofy().load().type(Event.class).order(orderBy);
@@ -312,7 +314,7 @@ public class PlanitApi {
 			name="queryEventsAndFilter", 
 			path="event", 
 			httpMethod = HttpMethod.POST
-		)
+			)
 	public List<Event> queryEventsAndFilter(String property, String operator, String value) {
 
 		String propertyAndOperator = property + " " + operator;
@@ -336,7 +338,7 @@ public class PlanitApi {
 			name="queryEventsCustomFilter",
 			path="event",
 			httpMethod = HttpMethod.POST
-		)
+			)
 	public List<Event> queryEventsCustomFilter() {
 
 		Query<Event> query = ofy().load().type(Event.class)
@@ -529,15 +531,15 @@ public class PlanitApi {
 	}
 
 	/**
-     * Unregister from the specified Event.
-     *
-     * @param user An user who invokes this method, null when the user is not signed in.
-     * @param websafeConferenceKey The String representation of the Event Key 
-     * to unregister from.
-     * @return Boolean true when success, otherwise false.
-     * @throws UnauthorizedException when the user is not signed in.
-     * @throws NotFoundException when there is no Event with the given eventId.
-     */
+	 * Unregister from the specified Event.
+	 *
+	 * @param user An user who invokes this method, null when the user is not signed in.
+	 * @param websafeConferenceKey The String representation of the Event Key 
+	 * to unregister from.
+	 * @return Boolean true when success, otherwise false.
+	 * @throws UnauthorizedException when the user is not signed in.
+	 * @throws NotFoundException when there is no Event with the given eventId.
+	 */
 	@ApiMethod(
 			name = "unregisterFromEvent",
 			path = "event/{websafeEventKey}/registration",
@@ -589,7 +591,7 @@ public class PlanitApi {
 				}
 			}
 		});
-		
+
 		// if result is false
 		if (!result.getResult()) {
 			if (result.getReason().contains(EVENT_NOT_FOUND_ERROR)) {
@@ -603,20 +605,20 @@ public class PlanitApi {
 		}
 		return result;
 	}
-	
+
 
 	/////////////////////// MEMCACHING METHODS //////////////////
-	
+
 	@ApiMethod(
 			name = "getAnnouncement",
 			path = "announcement",
 			httpMethod = HttpMethod.GET
-		)
+			)
 	public Announcement getAnnoncement() {	
-		
+
 		// Connect to a memcache service
 		MemcacheService memcacheService = MemcacheServiceFactory.getMemcacheService();
-		
+
 		// Query memcache for the announcement message, which would have been stored with our Constant
 		Object message = memcacheService.get(Constants.MEMCACHE_ANNOUNCEMENTS_KEY);
 
@@ -625,9 +627,9 @@ public class PlanitApi {
 		if (message != null) {
 			return new Announcement(message.toString());
 		}
-		
+
 		return null;
-		
+
 	}
 
 	///////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
