@@ -320,7 +320,7 @@ planitApp.controllers.controller('CreateEventCtrl',
         					}
          				} else {
          					// The request has succeeded
-         					$scope.messages = 'The event has been created : ' + resp.result.name;
+         					$scope.messages = 'The event has been created : ' + resp.result.title;
          					$scope.alertStatus = 'success';
          					$scope.submitted = false;
          					$scope.event = {};
