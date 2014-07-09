@@ -639,7 +639,7 @@ public class PlanitApi {
 	 */
 	private static String getUserId(User user) {
 
-		String userId = getUserId(user);
+		String userId = user.getUserId();
 		if (userId == null) {
 
 			LOG.info("userId is null, so trying to obtain it from the datastore.");
