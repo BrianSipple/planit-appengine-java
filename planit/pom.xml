@@ -7,12 +7,9 @@
 	<version>1</version>
 	<packaging>war</packaging>
 
-	<name>planit</name>
-	<url>http://maven.apache.org</url>
-
 	<properties>
 		<appengine.app.version>1</appengine.app.version>
-		<appengine.target.version>1.9.3</appengine.target.version>
+		<appengine.target.version>1.9.4</appengine.target.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 

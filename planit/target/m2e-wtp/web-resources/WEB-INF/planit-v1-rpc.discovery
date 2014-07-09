@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/E8nEVSWL35oB-_Ow3jPSzQ1KCwk\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/4KIzfGCTXihyBMUbfOny_6a9j5U\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -69,6 +69,15 @@
   }
  },
  "schemas": {
+  "Announcement": {
+   "id": "Announcement",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    }
+   }
+  },
   "Event": {
    "id": "Event",
    "type": "object",
@@ -131,8 +140,20 @@
     "webSafeKey": {
      "type": "string"
     },
-    "zipCode": {
+    "zip": {
      "type": "string"
+    }
+   }
+  },
+  "EventCollection": {
+   "id": "EventCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "Event"
+     }
     }
    }
   },
@@ -147,10 +168,8 @@
      "type": "string"
     },
     "attendees": {
-     "type": "array",
-     "items": {
-      "$ref": "User"
-     }
+     "type": "integer",
+     "format": "int32"
     },
     "categories": {
      "type": "array",
@@ -172,9 +191,8 @@
      "type": "integer",
      "format": "int32"
     },
-    "registrationsAvailable": {
-     "type": "integer",
-     "format": "int32"
+    "organizerUserId": {
+     "type": "string"
     },
     "startDate": {
      "type": "string",
@@ -186,10 +204,75 @@
     "title": {
      "type": "string"
     },
-    "zipCode": {
+    "zip": {
      "type": "string"
     }
    }
+  },
+  "EventQueryForm": {
+   "id": "EventQueryForm",
+   "type": "object",
+   "properties": {
+    "filters": {
+     "type": "array",
+     "items": {
+      "$ref": "Filter"
+     }
+    }
+   }
+  },
+  "Field": {
+   "id": "Field",
+   "type": "string",
+   "enum": [
+    "ATTENDEES",
+    "CATEGORY",
+    "CITY",
+    "MAX_ATTENDEES",
+    "MONTH"
+   ],
+   "enumDescriptions": [
+    "",
+    "",
+    "",
+    "",
+    ""
+   ]
+  },
+  "Filter": {
+   "id": "Filter",
+   "type": "object",
+   "properties": {
+    "field": {
+     "$ref": "Field"
+    },
+    "operator": {
+     "$ref": "Operator"
+    },
+    "value": {
+     "type": "string"
+    }
+   }
+  },
+  "Operator": {
+   "id": "Operator",
+   "type": "string",
+   "enum": [
+    "EQ",
+    "GT",
+    "GTEQ",
+    "LT",
+    "LTEQ",
+    "NE"
+   ],
+   "enumDescriptions": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ]
   },
   "Profile": {
    "id": "Profile",
@@ -201,6 +284,12 @@
     },
     "displayName": {
      "type": "string"
+    },
+    "eventsToAttendKeys": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     },
     "mainEmail": {
      "type": "string"
@@ -253,24 +342,15 @@
     ""
    ]
   },
-  "User": {
-   "id": "User",
+  "WrappedBoolean": {
+   "id": "WrappedBoolean",
    "type": "object",
    "properties": {
-    "authDomain": {
+    "reason": {
      "type": "string"
     },
-    "email": {
-     "type": "string"
-    },
-    "federatedIdentity": {
-     "type": "string"
-    },
-    "nickname": {
-     "type": "string"
-    },
-    "userId": {
-     "type": "string"
+    "result": {
+     "type": "boolean"
     }
    }
   }
@@ -293,11 +373,84 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "planit.getAnnouncement": {
+   "id": "planit.getAnnouncement",
+   "allowGet": true,
+   "returns": {
+    "$ref": "Announcement"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "planit.getEventsCreated": {
+   "id": "planit.getEventsCreated",
+   "returns": {
+    "$ref": "EventCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "planit.getEventsToAttend": {
+   "id": "planit.getEventsToAttend",
+   "allowGet": true,
+   "returns": {
+    "$ref": "EventCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "planit.getProfile": {
    "id": "planit.getProfile",
    "allowGet": true,
    "returns": {
     "$ref": "Profile"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "planit.queryEvents": {
+   "id": "planit.queryEvents",
+   "parameters": {
+    "resource": {
+     "$ref": "EventQueryForm"
+    }
+   },
+   "parameterOrder": [
+    "resource"
+   ],
+   "returns": {
+    "$ref": "EventCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "planit.queryEventsCustomFilter": {
+   "id": "planit.queryEventsCustomFilter",
+   "returns": {
+    "$ref": "EventCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "planit.registerForEvent": {
+   "id": "planit.registerForEvent",
+   "parameters": {
+    "websafeEventKey": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "websafeEventKey"
+   ],
+   "returns": {
+    "$ref": "WrappedBoolean"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -315,6 +468,24 @@
    ],
    "returns": {
     "$ref": "Profile"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "planit.unregisterFromEvent": {
+   "id": "planit.unregisterFromEvent",
+   "parameters": {
+    "websafeEventKey": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "websafeEventKey"
+   ],
+   "returns": {
+    "$ref": "WrappedBoolean"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

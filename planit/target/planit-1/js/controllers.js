@@ -459,7 +459,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     $scope.queryEvents = function () {
         $scope.submitted = false;
         if ($scope.selectedTab == 'ALL') {
-            $scope.queryEventssAll();
+            $scope.queryEventsAll();
         } else if ($scope.selectedTab == 'YOU_HAVE_CREATED') {
             $scope.getEventsCreated();
         } else if ($scope.selectedTab == 'YOU_WILL_ATTEND') {
@@ -468,12 +468,12 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     };
 
     /**
-     * Invokes the event.queryEvents API.
+     * Invokes the planit.queryEvents API.
      */
     $scope.queryEventsAll = function () {
         var sendFilters = {
             filters: []
-        }
+        };
         for (var i = 0; i < $scope.filters.length; i++) {
             var filter = $scope.filters[i];
             if (filter.field && filter.operator && filter.value) {
@@ -485,7 +485,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
             }
         }
         $scope.loading = true;
-        gapi.client.event.queryEvents(sendFilters).
+        gapi.client.planit.queryEvents(sendFilters).
             execute(function (resp) {
                 $scope.$apply(function () {
                     $scope.loading = false;
@@ -603,7 +603,7 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
      */
     $scope.init = function () {
         $scope.loading = true;
-        gapi.client.event.getEvent({
+        gapi.client.planit.getEvent({
             websafeEventKey: $routeParams.websafeEventKey
         }).execute(function (resp) {
             $scope.$apply(function () {
