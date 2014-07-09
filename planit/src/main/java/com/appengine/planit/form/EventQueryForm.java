@@ -39,7 +39,8 @@ public class EventQueryForm {
 		CATEGORY("categories", FieldType.STRING),
 		MONTH("month", FieldType.INTEGER),
 		MAX_ATTENDEES("maxAttendees", FieldType.INTEGER),
-		ATTENDEES("attendees", FieldType.INTEGER);
+		ATTENDEES("attendees", FieldType.INTEGER),
+		REGISTRATIONS_AVAILABLE("registrationsAvailable", FieldType.INTEGER);
 
 		private String fieldName;
 

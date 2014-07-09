@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/4KIzfGCTXihyBMUbfOny_6a9j5U\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/3UL109ZmQvOojZKS4uHhVUbUZgs\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -229,9 +229,11 @@
     "CATEGORY",
     "CITY",
     "MAX_ATTENDEES",
-    "MONTH"
+    "MONTH",
+    "REGISTRATIONS_AVAILABLE"
    ],
    "enumDescriptions": [
+    "",
     "",
     "",
     "",

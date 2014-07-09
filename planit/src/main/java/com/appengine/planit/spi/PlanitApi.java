@@ -237,9 +237,9 @@ public class PlanitApi {
 	public List<Event> queryEvents(EventQueryForm eventQueryForm) {
 
 		Iterable<Event> eventsIterable = eventQueryForm.getQuery().list();
-		ArrayList<Event> result = new ArrayList();
+		ArrayList<Event> result = new ArrayList<Event>();
 
-		List<Key<Profile>> organizersKeyList = new ArrayList();
+		List<Key<Profile>> organizersKeyList = new ArrayList<>();
 
 		for (Event event: eventsIterable) {
 
@@ -270,7 +270,7 @@ public class PlanitApi {
 			path= "getEventsCreated",
 			httpMethod = HttpMethod.POST
 			)
-	public List<Event> queryEventsCreated(final User user) throws UnauthorizedException {
+	public List<Event> getEventsCreated(final User user) throws UnauthorizedException {
 
 		// Confirm that the user is logged in
 		if (user == null) {

@@ -144,7 +144,7 @@ planitApp.controllers.controller('CreateEventCtrl',
          */
         $scope.event = $scope.event || {};
 
-                /**
+        /**
          * Holds the default values for the input candidates for city select.
          * @type {string[]}
          */
@@ -174,6 +174,71 @@ planitApp.controllers.controller('CreateEventCtrl',
             'Medical Innovations',
             'Other'
         ];
+        
+        
+        /**
+         * Holds the list of selection options for US states
+         * 
+         */
+        $scope.states = [
+             "AK",
+             "AL",
+             "AR",
+             "AZ",
+             "CA",
+             "CO",
+             "CT",
+             "DC",
+             "DE",
+             "FL",
+             "GA",
+             "GU",
+             "HI",
+             "IA",
+             "ID",
+             "IL",
+             "IN",
+             "KS",
+             "KY",
+             "LA",
+             "MA",
+             "MD",
+             "ME",
+             "MH",
+             "MI",
+             "MN",
+             "MO",
+             "MS",
+             "MT",
+             "NC",
+             "ND",
+             "NE",
+             "NH",
+             "NJ",
+             "NM",
+             "NV",
+             "NY",
+             "OH",
+             "OK",
+             "OR",
+             "PA",
+             "PR",
+             "PW",
+             "RI",
+             "SC",
+             "SD",
+             "TN",
+             "TX",
+             "UT",
+             "VA",
+             "VI",
+             "VT",
+             "WA",
+             "WI",
+             "WV",
+             "WY",
+          ];
+        
 
         /**
          * Tests if the arugment is an integer and not negative.
@@ -267,22 +332,6 @@ planitApp.controllers.controller('CreateEventCtrl',
 });
 
 
-/**
- * @ngdoc controller
- * @name ConfirmationEmailCtrl
- *
- * @description
- * A controller used for the background task of sending a confirmation email to 
- * the user once they create an event
- */
-planitApp.controllers.controller('ConfirmationEmailCtrl',
-	function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
-	
-	
-	
-	
-	
-});
 
 
 /**
@@ -314,7 +363,8 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
         {enumValue: 'CATEGORY', displayName: 'Category'},
         {enumValue: 'MONTH', displayName: 'Start month'},
         {enumValue: 'MAX_ATTENDEES', displayName: 'Max Attendees'},
-        {enumValue: 'ATTENDEES', displayName: 'Attendees'}
+        {enumValue: 'ATTENDEES', displayName: 'Attendees'},
+        {enumValue: 'REGISTRATIONS_AVAILABLE', displayName: 'Registrations Available'}
     ]
 
     /**
@@ -463,7 +513,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
         } else if ($scope.selectedTab == 'YOU_HAVE_CREATED') {
             $scope.getEventsCreated();
         } else if ($scope.selectedTab == 'YOU_WILL_ATTEND') {
-            $scope.getEventsAttend();
+            $scope.getEventsToAttend();
         }
     };
 
@@ -553,7 +603,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
      * Retrieves the events to attend by calling the event.getProfile method and
      * invokes the event.getEvent method n times where n == the number of the events to attend.
      */
-    $scope.getEventsAttend = function () {
+    $scope.getEventsToAttend = function () {
         $scope.loading = true;
         gapi.client.planit.getEventsToAttend().
             execute(function (resp) {
