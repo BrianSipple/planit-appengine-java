@@ -459,7 +459,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     $scope.queryEvents = function () {
         $scope.submitted = false;
         if ($scope.selectedTab == 'ALL') {
-            $scope.queryEventssAll();
+            $scope.queryEventsAll();
         } else if ($scope.selectedTab == 'YOU_HAVE_CREATED') {
             $scope.getEventsCreated();
         } else if ($scope.selectedTab == 'YOU_WILL_ATTEND') {
