@@ -1,0 +1,89 @@
+<html>
+<title>planit v1 Client Library for Java</title>
+<body>
+<h1>Overview</h1>
+<p>This is a client library bundle using Google Cloud Endpoints. In order to use this API client library in your project, you need to build the library using Maven.</p>
+
+<h2>How to build API client library using Maven</h2>
+<p>Under the root directory of the client bundle, run <b><i>"mvn install"</i></b> in the command console.</p>
+
+<h2>How to use API client library in Maven project</h2>
+<p><b>Step 1</b>: Add the following &lt;dependency&gt; section to your <b><i>pom.xml</i></b> file.</p>
+<ul>
+<pre style="background-color: #eee;">
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.appspot.planit_web&lt;/groupId&gt;
+      &lt;artifactId&gt;planit&lt;/artifactId&gt;
+      &lt;version&gt;v1-1.18.0-rc-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+</pre>
+</ul>
+<p><b>Step 2</b>: Add one of the following &lt;dependency&gt; sections to your <b><i>pom.xml</i></b> file, based on your platform (Android/App Engine/Servlet). Google Cloud Endpoints API client is compatible with all supported Java platforms (with minimum Java version 5).</p>
+<ul>
+<li>
+<b>For Android</b>
+<pre style="background-color: #eee;">
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.google.api-client&lt;/groupId&gt;
+      &lt;artifactId&gt;google-api-client-android&lt;/artifactId&gt;
+      &lt;version&gt;1.18.0-rc&lt;/version&gt;
+    &lt;/dependency&gt;
+</pre>
+</li>
+<li>
+<b>For App Engine</b>
+<pre style="background-color: #eee;">
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.google.api-client&lt;/groupId&gt;
+      &lt;artifactId&gt;google-api-client-appengine&lt;/artifactId&gt;
+      &lt;version&gt;1.18.0-rc&lt;/version&gt;
+    &lt;/dependency&gt;
+</pre>
+</li>
+<li>
+<b>For Java Servlet</b>
+<pre style="background-color: #eee;">
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.google.api-client&lt;/groupId&gt;
+      &lt;artifactId&gt;google-api-client-servlet&lt;/artifactId&gt;
+      &lt;version&gt;1.18.0-rc&lt;/version&gt;
+    &lt;/dependency&gt;
+</pre>
+</li>
+</ul>
+<p><b>Step 3</b>: Add one of the following &lt;dependency&gt; sections to your <b><i>pom.xml</i></b> file, or directly import AndroidJsonFactory into your Java source, based on your JsonFactory implementation (GSON/Jackson/AndroidJson).</p>
+<ul>
+<li>
+<b>Using GsonFactory</b>
+<pre style="background-color: #eee;">
+  &lt;dependency&gt;
+    &lt;groupId&gt;com.google.http-client&lt;/groupId&gt;
+    &lt;artifactId&gt;google-http-client-gson&lt;/artifactId&gt;
+    &lt;version&gt;1.18.0-rc&lt;/version&gt;
+  &lt;/dependency&gt;
+</pre>
+</li>
+<li>
+<b>Using JacksonFactory</b>
+<pre style="background-color: #eee;">
+  &lt;dependency&gt;
+    &lt;groupId&gt;com.google.http-client&lt;/groupId&gt;
+    &lt;artifactId&gt;google-http-client-jackson2&lt;/artifactId&gt;
+    &lt;version&gt;1.18.0-rc&lt;/version&gt;
+  &lt;/dependency&gt;
+</pre>
+</li>
+<li>
+<b>Using AndroidJsonFactory (Android with minimum API level 11)</b><br/>
+For Android with minimum API level 11, import AndroidJsonFactory into your Java source.
+<pre style="background-color: #eee;">
+  import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+</pre>
+</li>
+</ul>
+<p><b>Step 4</b>: Refer to the "Creating the service object" and "Calling the API exposed by the Endpoint" sections of this <a href="https://developers.google.com/appengine/docs/java/endpoints/consume_android">Endpoints Java Documentation</a> to see how to use the client library in Android.</p>
+
+
+
+</html>
+

@@ -5,9 +5,11 @@ import static com.appengine.planit.service.OfyService.ofy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.appengine.planit.Constants;
 import com.appengine.planit.domain.Announcement;
+import com.appengine.planit.domain.AppEngineUser;
 import com.appengine.planit.domain.Event;
 import com.appengine.planit.domain.Profile;
 import com.appengine.planit.form.EventForm;
@@ -29,6 +31,7 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.Query;
 
@@ -47,9 +50,12 @@ import com.googlecode.objectify.cmd.Query;
 
 public class PlanitApi {
 
+	private static final Logger LOG = Logger.getLogger(PlanitApi.class.getName());
+
 	public static final String EVENT_NOT_FOUND_ERROR = "No Event found with key: ";
 	public static final String ALREADY_REGISTERED_ERROR = "Already registered: ";
 	public static final String NOT_REGISTERED_ERROR = "Not currently registered: ";
+
 
 
 	/**
@@ -85,7 +91,7 @@ public class PlanitApi {
 
 		// Get the userId and mainEmail
 		mainEmail = user.getEmail();
-		userId = user.getUserId();
+		userId = getUserId(user);
 
 		// Get the profile attributes from the profile form
 		teeShirtSize = profileForm.getTeeShirtSize();
@@ -149,7 +155,7 @@ public class PlanitApi {
 		}
 
 		/// load the Profile Entitiy
-		String userId = user.getUserId();
+		String userId = getUserId(user);
 		Key key = Key.create(Profile.class, userId);
 		Profile profile = (Profile) ofy().load().key(key).now();
 		return profile;
@@ -176,7 +182,7 @@ public class PlanitApi {
 		}
 
 		// Get the parameters we'll need to use our Profile and Event entities
-		String userId = user.getUserId();
+		String userId = getUserId(user);
 		Key<Profile> profileKey = Key.create(Profile.class, userId);
 		final Key<Event> eventKey = ofy().factory().allocateId(profileKey, Event.class);
 		final long eventId = eventKey.getId();
@@ -225,7 +231,7 @@ public class PlanitApi {
 	 */
 	@ApiMethod (
 			name="queryEvents", 
-			path="event", 
+			path="queryEvents", 
 			httpMethod = HttpMethod.POST
 			)
 	public List<Event> queryEvents(EventQueryForm eventQueryForm) {
@@ -251,17 +257,20 @@ public class PlanitApi {
 
 
 	/**
-	 * Return a list of events created specifically by that user (the "ancestor" to those event entities)
-	 * @param user
-	 * @return
-	 * @throws UnauthorizedException
+    /**
+	 * Returns a list of Events that the user created.
+	 * In order to receive the websafeEventKey via the JSON params, uses a POST method.
+	 *
+	 * @param user An user who invokes this method, null when the user is not signed in.
+	 * @return a list of Events that the user created.
+	 * @throws UnauthorizedException when the user is not signed in.
 	 */
 	@ApiMethod (
-			name = "queryEventsCreated",
-			path= "event",
+			name = "getEventsCreated",
+			path= "getEventsCreated",
 			httpMethod = HttpMethod.POST
 			)
-	public List<Event> queryEventsCreated(User user, EventQueryForm eventQueryForm) throws UnauthorizedException {
+	public List<Event> queryEventsCreated(final User user) throws UnauthorizedException {
 
 		// Confirm that the user is logged in
 		if (user == null) {
@@ -269,7 +278,7 @@ public class PlanitApi {
 		}
 
 		// get the userId
-		String userId = user.getUserId();
+		String userId = getUserId(user);
 
 		// We need to be passing a user key into the query, not the userId!
 		Key userKey = Key.create(Profile.class, userId);
@@ -281,51 +290,6 @@ public class PlanitApi {
 		return query.list();
 	}
 
-	/**
-	 * Queries from all events created, and then orders them on the passed-in name
-	 * @param user
-	 * @param orderBy
-	 * @return
-	 */
-	@ApiMethod (
-			name="queryEventsAndOrder", 
-			path="event", 
-			httpMethod = HttpMethod.POST
-			)
-	public List<Event> queryEventsAndOrder(String orderBy) {
-
-		Query<Event> query = ofy().load().type(Event.class).order(orderBy);
-
-		return query.list();
-
-	}
-
-	/**
-	 * Queries all events, and then filters using a passed-in property, boolean operator,
-	 * and value parameter.
-	 * 
-	 * Warning: Any property being queried on in DataStore MUST have an index
-	 * @param property
-	 * @param operator
-	 * @param value
-	 * @return
-	 */
-	@ApiMethod (
-			name="queryEventsAndFilter", 
-			path="event", 
-			httpMethod = HttpMethod.POST
-			)
-	public List<Event> queryEventsAndFilter(String property, String operator, String value) {
-
-		String propertyAndOperator = property + " " + operator;
-
-		Query<Event> query = ofy().load().type(Event.class)
-				.order(property)
-				.filter(propertyAndOperator, value);  // ordering and sorting must be applied before filtering!
-
-		return query.list();
-
-	}
 
 
 
@@ -336,7 +300,7 @@ public class PlanitApi {
 	 */
 	@ApiMethod(
 			name="queryEventsCustomFilter",
-			path="event",
+			path="queryEventsCustomFilter",
 			httpMethod = HttpMethod.POST
 			)
 	public List<Event> queryEventsCustomFilter() {
@@ -403,20 +367,20 @@ public class PlanitApi {
 	 */
 	@ApiMethod(
 			name="registerForEvent",
-			path="event",
+			path="event/{websafeEventKey}/registration",
 			httpMethod = HttpMethod.POST
 			)
 	public WrappedBoolean registerForEvent(final User user, 
 			@Named("websafeEventKey") final String websafeEventKey)
 					throws UnauthorizedException, NotFoundException,
 					ForbiddenException, ConflictException {
+
 		// If not signed in, throw a 401 error.
 		if (user == null) {
 			throw new UnauthorizedException("Authorization required");
 		}
 
-		// Get the userId
-		String userId = user.getUserId();
+		String userId = getUserId(user);
 
 		WrappedBoolean result = ofy().transact(new Work<WrappedBoolean>() {
 
@@ -495,8 +459,8 @@ public class PlanitApi {
 	 */
 	@ApiMethod(
 			name = "getEventsToAttend",
-			path = "events/{websafeEventKey}",
-			httpMethod = HttpMethod.POST			
+			path = "getEventsToAttend",
+			httpMethod = HttpMethod.GET			
 			)
 	public Collection<Event> getEventsToAttend(User user) 
 			throws UnauthorizedException, NotFoundException {
@@ -632,7 +596,7 @@ public class PlanitApi {
 
 	}
 
-	///////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
+	/////////////////////////////////////////////////////// HELPERS //////////////////////////////////////////////
 
 
 	/**
@@ -653,17 +617,101 @@ public class PlanitApi {
 	private static Profile getProfileFromUser(User user) {
 		// First fetch the user's Profile from the datastore.
 		Profile profile = ofy().load().key(
-				Key.create(Profile.class, user.getUserId())).now();
+				Key.create(Profile.class, getUserId(user))).now();
 		if (profile == null) {
 			// Create a new Profile if it doesn't exist.
 			// Use default displayName and teeShirtSize
 			String email = user.getEmail();
-			profile = new Profile(user.getUserId(),
+			profile = new Profile(getUserId(user),
 					extractDefaultDisplayNameFromEmail(email), email, 0, TeeShirtSize.NOT_SPECIFIED);
 		}
 		return profile;
 	}
+	
 
+	/**
+	 * A small hack for getting the user name... accounting for the fact that 
+	 * Android apps making API calls don't inject the userId in the User object
+	 * that they send to the API.
+	 * 
+	 * @param user the User object provided by the application making the API call
+	 * @return the user ID
+	 */
+	private static String getUserId(User user) {
+
+		String userId = getUserId(user);
+		if (userId == null) {
+
+			LOG.info("userId is null, so trying to obtain it from the datastore.");
+			AppEngineUser appEngineUser = new AppEngineUser(user);
+			ofy().save().entity(appEngineUser).now();
+
+			// Begin new session for not using session cache.
+			Objectify objectify = ofy().factory().begin();
+			AppEngineUser savedUser = objectify.load().key(appEngineUser.getKey()).now();
+			userId = savedUser.getUser().getUserId();
+			LOG.info("Obtained the userId: " + userId);
+		}
+
+		return userId;
+	}
+	
+    /**
+     * A wrapper class that can embrace a generic result or some kind of exception.
+     *
+     * Use this wrapper class for the return type of objectify transaction.
+     * <pre>
+     * {@code
+     * // The transaction that returns Event object.
+     * TxResult<Event> result = ofy().transact(new Work<TxResult<Event>>() {
+     *     public TxResult<Event> run() {
+     *         // Code here.
+     *         // To throw 404
+     *         return new TxResult<>(new NotFoundException("No such event"));
+     *         // To return an event.
+     *         Event event = somehow.getEvent();
+     *         return new TxResult<>(event);
+     *     }
+     * }
+     * // Actually the NotFoundException will be thrown here.
+     * return result.getResult();
+     * </pre>
+     *
+     * @param <ResultType> The type of the actual return object.
+     */
+	private static class TxResult<ResultType> {
+		
+		private ResultType result;
+		
+		private Throwable exception;
+		
+		private TxResult(ResultType result) {
+			this.result = result;
+		}
+		
+		private TxResult(Throwable exception) {
+			if (exception instanceof NotFoundException ||
+					exception instanceof ForbiddenException ||
+					exception instanceof ConflictException) {
+				this.exception = exception;
+			} else {
+				throw new IllegalArgumentException("Exception not supported");
+			}
+		}
+		
+		private ResultType getResult() throws NotFoundException, ForbiddenException, ConflictException {
+			if (exception instanceof NotFoundException) {
+				throw (NotFoundException) exception;
+			}
+			if (exception instanceof ForbiddenException) {
+				throw (ForbiddenException) exception;
+			}
+			if (exception instanceof ConflictException) {
+				throw (ConflictException) exception;
+			}
+			return result;
+		}
+	}
 }
 
 
