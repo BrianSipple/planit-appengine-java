@@ -51,7 +51,7 @@
 	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container">
 			
-			<div class="navbar-header">
+			<div class="navbar-header" ng-controller="ImageController as images">
 				<!-- Collapsed small-screen navbar display... otherwise we go straight to the logo and full bar -->
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" >
 					<span class="sr-only">Toggle navigation </span>
@@ -59,7 +59,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<img id="navbar-header-logo" ng-src="img/TransparentLogoBig.jpg"><a class="navbar-brand" href="/">Planit</a>
+				<img id="navbar-header-logo" ng-src="{{images.logo}}"><a class="navbar-brand" href="/">Planit</a>
 			
 			</div>
 			

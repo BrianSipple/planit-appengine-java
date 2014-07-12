@@ -19,6 +19,16 @@ var planitApp = planitApp || {};
  */
 planitApp.controllers = angular.module('planitControllers', ['ui.bootstrap']);
 
+
+/**
+ * Quick hack for preloading the logo in the header
+ */
+planitApp.controllers.controller('ImageController', 
+		function() {
+	this.logo = "../img/TransparentLogoBig.jpg";
+})
+
+
 /**
  * @ngdoc controller
  * @name MyProfileCtrl
