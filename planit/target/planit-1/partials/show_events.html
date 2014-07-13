@@ -62,8 +62,8 @@
                         <td>{{event.name}}</td>
                         <td>{{event.city}}</td>
                         <td>{{event.startDate | date:'dd-MMMM-yyyy'}}</td>
-                        <td>{{event.organizerDisplayName}}</td>
-                        <td>{{event.maxAttendees - event.seatsAvailable}} / {{event.maxAttendees}}</td>
+                        <td>{{event.getOrganizerDisplayName()}}</td>
+                        <td>{{event.maxAttendees - event.registrationsAvailable}} / {{event.maxAttendees}}</td>
                     </tr>
                     </tbody>
                 </table>

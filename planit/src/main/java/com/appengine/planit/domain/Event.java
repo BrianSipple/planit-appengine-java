@@ -197,7 +197,7 @@ public class Event {
 	 * Get a String verison of the key
 	 * @return String websafeKey
 	 */
-	public String getWebSafeKey() {
+	public String getWebsafeKey() {
 		return Key.create(profileKey, Event.class, id).getString();
 	}
 	

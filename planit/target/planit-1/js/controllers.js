@@ -532,7 +532,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
      */
     $scope.queryEventsAll = function () {
         var sendFilters = {
-            filters: []
+            filters: []			// This acts as the API's eventQueryForm
         };
         for (var i = 0; i < $scope.filters.length; i++) {
             var filter = $scope.filters[i];

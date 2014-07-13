@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/3UL109ZmQvOojZKS4uHhVUbUZgs\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/fVvhr9IP1bwtcc29tLI0tnNrpfo\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -380,6 +380,25 @@
    "allowGet": true,
    "returns": {
     "$ref": "Announcement"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "planit.getEvent": {
+   "id": "planit.getEvent",
+   "allowGet": true,
+   "parameters": {
+    "websafeEventKey": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "websafeEventKey"
+   ],
+   "returns": {
+    "$ref": "Event"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

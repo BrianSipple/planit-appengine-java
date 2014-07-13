@@ -27,7 +27,7 @@ var app = angular.module('planitApp',
 				})
 				.when('/event/detail/:websafeEventKey', {
 					templateUrl: '/partials/event_detail.html',
-					controller: 'EventDetailsCtrl'
+					controller: 'EventDetailCtrl'
 				})
 				.when('/profile', {
 					templateUrl: '/partials/profile.html',

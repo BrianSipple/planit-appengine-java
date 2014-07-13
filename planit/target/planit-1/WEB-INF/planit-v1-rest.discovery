@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/3UL109ZmQvOojZKS4uHhVUbUZgs\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/Gn8DvcT0tHZJFfqfm7ek-HaLDsM\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -139,7 +139,7 @@
     "title": {
      "type": "string"
     },
-    "webSafeKey": {
+    "websafeKey": {
      "type": "string"
     },
     "zip": {
@@ -381,6 +381,27 @@
    "httpMethod": "GET",
    "response": {
     "$ref": "Announcement"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getEvent": {
+   "id": "planit.getEvent",
+   "path": "event/{websafeEventKey}",
+   "httpMethod": "GET",
+   "parameters": {
+    "websafeEventKey": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "websafeEventKey"
+   ],
+   "response": {
+    "$ref": "Event"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

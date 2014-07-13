@@ -214,6 +214,30 @@ public class PlanitApi {
 		});
 		return event;
 	}
+	
+	/**
+	 * Get an event by querying on its websafeEventKey
+	 */
+	@ApiMethod(
+			name = "getEvent",
+			path = "event/{websafeEventKey}",
+			httpMethod = HttpMethod.GET
+			)
+	public Event getEvent( 
+			@Named("websafeEventKey") final String websafeEventKey)
+			throws NotFoundException {
+		Key<Event> eventKey = Key.create(websafeEventKey);
+		Event event = ofy().load().key(eventKey).now();
+		
+		if (event == null) {
+			throw new NotFoundException("No event found with key: " + websafeEventKey);
+		}
+		
+		return event;
+		
+	}
+			
+	
 
 
 	/**
