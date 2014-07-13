@@ -183,6 +183,9 @@ public class EventQueryForm {
 	
     /**
      * Returns an Objectify Query object for the specified filters.
+     * 
+     * Note: if the query form is empty or null, this pattern allows us 
+     * to just get all events. 
      *
      * @return an Objectify Query.
      */

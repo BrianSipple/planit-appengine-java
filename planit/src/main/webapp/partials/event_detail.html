@@ -1,0 +1,50 @@
+<div ng-controller="EventDetailCtrl">
+
+	<div class="row">
+		<div class="col-lg-12">
+			<div id="messages" class="alert alert-{{alertStatus}}" ng-show="messages">
+				<span ng-bind="messages"></span>
+				<i class="dismiss-messages pull-right glyphicon-remove" ng-click="messages = ''" ng-show="messages"></i>
+			</div>
+			<img class="spinner" src="/img/ajax-loader.gif" ng-show="loading" />
+		</div>
+	</div>
+
+	<div class="row" ng-init"init()">
+		<div class="well well-sm">
+			<h2>{{event.title}}</h2>
+			<h5>{{event.description}}</h5>
+			<div>
+				<label for="registered">Registred/Open: </label>
+				<span id="registered">{{event.maxAttendees - event.registrationsAvailable}} / {{event.maxAttendees}}</span>
+			</div>
+			<div>
+				<p><a class="btn btn-primary" ng-hide="isUserAttending" ng-click="registerForEvent()" ng-disabled="loading">Register</a></p>
+				<p><a class="btn btn-primary" ng-show="isUserAttending" ng-click="unregisterFromEvent()" ng-disabled="loading">Unregister</a></p>
+			</div>
+
+			<form class="form" novalidate role="form">
+				<fieldset>
+					<div>
+						<label for="city">City: </label>
+						<span id="city">{{event.city}}</span>
+					</div>
+					<div>
+						<label for="categories">Categories: </label>
+						<span id="categories">
+							<span ng-repeat="category in event.categories" class="label label-primary label-separated">{{category}}</span>
+						</span>
+					</div>
+					<div>
+						<label for="startDate">Start Date: </label>
+						<span id="city">{{event.startDate | date:'dd-MMMM-yyyy'}}</span>
+					</div>
+					<div>
+						<label for="endDate">End Date: </label>
+						<span id="endDate">{{event.endDate | date:'dd-MMMM-yyyy'}]</span>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>

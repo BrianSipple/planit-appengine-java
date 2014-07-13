@@ -235,6 +235,11 @@ public class PlanitApi {
 			httpMethod = HttpMethod.POST
 			)
 	public List<Event> queryEvents(EventQueryForm eventQueryForm) {
+		
+		if (eventQueryForm == null) {
+			Iterable<Event> eventsIterable = (Query<Event>) ofy().load().type(Event.class).order("title");
+			
+		}
 
 		Iterable<Event> eventsIterable = eventQueryForm.getQuery().list();
 		ArrayList<Event> result = new ArrayList<Event>();
