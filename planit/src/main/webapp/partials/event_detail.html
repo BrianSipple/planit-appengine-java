@@ -10,7 +10,7 @@
 		</div>
 	</div>
 
-	<div class="row" ng-init"init()">
+	<div class="row" ng-init="init()">
 		<div class="well well-sm">
 			<h2>{{event.title}}</h2>
 			<h5>{{event.description}}</h5>
@@ -41,10 +41,55 @@
 					</div>
 					<div>
 						<label for="endDate">End Date: </label>
-						<span id="endDate">{{event.endDate | date:'dd-MMMM-yyyy'}]</span>
+						<span id="endDate">{{event.endDate | date:'dd-MMMM-yyyy'}}</span>
 					</div>
 				</fieldset>
 			</form>
 		</div>
+		
+		<section class="tab" ng-init="tab = 1">
+			
+			<ul class="nav nav-pills">
+				<li ng-class="{ active: tab === 1 }">
+					<a href ng-click="setTab(1)">Description</a>
+				</li>
+				<li ng-class="{ active: tab === 2 }">
+					<a href ng-click="setTab(2); getAttendeeProfiles()">Who's Going</a>
+				</li>
+				<li ng-class="{ active: tab === 3 }">
+					<a href ng-click="setTab(3)">Photos</a>
+				</li>
+			</ul>
+
+			<div ng-show="tab === 1">
+				<h4>Description</h4>
+				<blockquote>{{event.description}}</blockquote>
+			</div>
+			<div ng-show="tab === 2">
+				<h4>Confirmed attendees</h4>
+				<ul class="list-group"> <!-- TODO: Make this richer -->
+					<li class="list-group-item" ng-repeat="attendee in attendees">{{attendee.name}}</li>
+				</ul>
+			</div>
+			<div ng-show="tab === 3">
+				<p ng-show="photos.length == 0">No photos have been posted for this event yet.</p>
+				<div id="event-detail-photo-containter" ng-show="photos.length > 0">
+					<h4>Photos</h4>
+						<img ng-src="{{photos[0]}}" />
+						<ul class="list-inline thumbs">
+							<li class="thumbnail" ng-repeat="photo in photos">
+								<img ng-src="{{photo}}" />
+							</li>
+						</ul>
+				</div>
+			</div>
+
+		</section>
+
 	</div>
 </div>
+
+
+
+
+

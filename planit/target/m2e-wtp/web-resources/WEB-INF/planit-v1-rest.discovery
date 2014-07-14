@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/fVvhr9IP1bwtcc29tLI0tnNrpfo\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/Gn8DvcT0tHZJFfqfm7ek-HaLDsM\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -139,7 +139,7 @@
     "title": {
      "type": "string"
     },
-    "webSafeKey": {
+    "websafeKey": {
      "type": "string"
     },
     "zip": {

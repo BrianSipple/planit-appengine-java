@@ -652,7 +652,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
  * A controller used for the event detail page.
  */
 planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $routeParams, HTTP_ERRORS) {
-    $scope.conference = {};
+    $scope.event = {};
 
     $scope.isUserAttending = false;
 
@@ -692,8 +692,8 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
                     // Failed to get a user profile.
                 } else {
                     var profile = resp.result;
-                    for (var i = 0; i < profile.eventKeysToAttend.length; i++) {
-                        if ($routeParams.websafeEventKey == profile.eventKeysToAttend[i]) {
+                    for (var i = 0; i < profile.eventsToAttendKeys.length; i++) {
+                        if ($routeParams.websafeEventKey == profile.eventsToAttendKeys[i]) {
                             // The user is attending the event.
                             $scope.alertStatus = 'info';
                             $scope.messages = 'You are attending this event';
@@ -783,6 +783,56 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
             });
         });
     };
+
+
+    /**
+     * Logic for setting and checking which tab in an
+     * event's display view is currently set/active
+     */
+    $scope.tab = 1;
+
+    $scope.setTab = function(tab) {
+        $scope.tab = tab;
+    };
+
+    $scope.isSet = function(tab) {
+        return $scope.tab === tab;
+    };
+
+    
+    /**
+     * Get a list of the confirmed attendees for the current event
+     *
+     */
+
+    $scope.attendees = {};
+    
+    $scope.getAttendeeProfiles = function() {
+        $scope.loading = true;
+        gapi.client.planit.getAttendeeProfiles({
+            websafeEventKey: $routeParams.websafeEventKey
+        }).execute(function(resp) {
+            $scope.$apply(function() {
+                $scope.loading = false;
+                if (resp.error) {
+                    var errorMessage = resp.error.message || " ";
+                    $scope.messages = "Failed to find any users attending this event : " + errorMessage;
+                    $scope.alertStatus = "warning";
+                    $log.error($scope.messages);
+                    if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
+                        oauth2Provider.showLoginModal();
+                        return;
+                    }
+                } else {
+                    // we have our list of profiles
+                    $scope.alertStatus = 'success';
+                    $scope.attendees = resp.result;
+                }
+            });
+        });
+    };
+
+
 });
 
 
