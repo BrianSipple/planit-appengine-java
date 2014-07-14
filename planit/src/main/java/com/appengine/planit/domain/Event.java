@@ -104,6 +104,13 @@ public class Event {
 	
 	
 	/**
+	 * List of Strings corresponding to the user IDs of all confirmed attendees
+	 */
+	@Index
+	private List<String> attendingUserIds;
+	
+	
+	/**
 	 * Current number of registrations avaialble, base upon the maxAttendees and current attendees
 	 */
 	@Index
@@ -229,6 +236,10 @@ public class Event {
 		return categories == null ? null : ImmutableList.copyOf(categories);
 	}
 
+	public List<String> getAttendingUserIds() {
+		return attendingUserIds;
+	}
+	
 	
 	public int getMonth() {
 		return month;
@@ -330,6 +341,12 @@ public class Event {
 		registrationsAvailable += number;
 	}
 	
+	public void addAttendingUserId(String userId) {
+		attendingUserIds.add(userId);
+		
+	}
+	
+	
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder("Id: " + id + "\n")
@@ -366,6 +383,8 @@ public class Event {
 		return stringBuilder.toString();
 		
 	}
+
+
 	
 }
 

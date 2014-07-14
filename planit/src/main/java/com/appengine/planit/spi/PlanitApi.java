@@ -156,8 +156,8 @@ public class PlanitApi {
 
 		/// load the Profile Entitiy
 		String userId = getUserId(user);
-		Key key = Key.create(Profile.class, userId);
-		Profile profile = (Profile) ofy().load().key(key).now();
+		Key<Profile> profileKey = Key.create(Profile.class, userId);
+		Profile profile = (Profile) ofy().load().key(profileKey).now();
 		return profile;
 	}
 
@@ -409,7 +409,7 @@ public class PlanitApi {
 			throw new UnauthorizedException("Authorization required");
 		}
 
-		String userId = getUserId(user);
+		final String userId = getUserId(user);
 
 		WrappedBoolean result = ofy().transact(new Work<WrappedBoolean>() {
 
@@ -449,6 +449,7 @@ public class PlanitApi {
 
 						// Decrease the event's registrations available
 						event.confirmRegistration(1);
+						event.addAttendingUserId(userId);
 
 						// Save the event and profile entities in one unified transaction
 						ofy().save().entities(event, profile).now();
@@ -522,6 +523,36 @@ public class PlanitApi {
 		return eventCollection;
 
 	}
+	
+	@ApiMethod(
+			name = "getEventAttendeeProfiles",
+			path = "event/{websafeEventKey}/getProfiles",
+			httpMethod = HttpMethod.GET
+			)
+	public List<Profile> getEventAttendeeProfiles(
+			@Named("websafeEventKey") final String websafeEventKey) {
+		
+		// Get the event
+		Key<Event> eventKey = Key.create(websafeEventKey);
+		Event event = ofy().load().key(eventKey).now();
+		
+		// Get the event's list of Strings for the user ids of those attending
+		List<String> userIds = event.getAttendingUserIds();
+		
+		List<Profile> profileList = new ArrayList<Profile>();
+		
+		// Get the profile objects by using each id as a key
+		for (String userId : userIds) {
+			
+			Key<Profile> profileKey = Key.create(Profile.class, userId);
+			Profile profile = ofy().load().key(profileKey).now();
+			profileList.add(profile);
+		}
+		
+		return profileList;
+	}
+	
+	
 
 	/**
 	 * Unregister from the specified Event.
