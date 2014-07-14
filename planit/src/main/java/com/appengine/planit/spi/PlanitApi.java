@@ -524,6 +524,18 @@ public class PlanitApi {
 
 	}
 	
+	
+	/**
+	 * Called by our EventDetailCtrl controller when a user loads an event detail
+	 * page. This will allow user profile objects to be displayed when a user selects
+	 * the "Who's Going" tab.
+	 * 
+	 * The method queries the event's list of Ids stored for its current attendess, then uses
+	 * the list to load the profiles corresponding to each Id
+	 *  
+	 * @param websafeEventKey
+	 * @return a list of Profile objects corresponding to the attendees. 
+	 */
 	@ApiMethod(
 			name = "getEventAttendeeProfiles",
 			path = "event/{websafeEventKey}/getProfiles",
