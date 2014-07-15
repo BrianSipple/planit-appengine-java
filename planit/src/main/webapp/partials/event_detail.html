@@ -65,11 +65,14 @@
 			</ul>
 
 			<!-- The content corresponding to our selected tab -->
+
+			<!-- event description tab's content -->
 			<div ng-show="isSetTab(1)">
 				<h4>Description</h4>
 				<blockquote>{{event.description}}</blockquote>
 			</div>
 			
+			<!-- List of attendees tab's content -->
 			<div ng-show="isSetTab(2)">
 				<h4>Confirmed attendees</h4>
 				<ul class="list-group"> <!-- TODO: Make this richer -->
@@ -77,6 +80,7 @@
 				</ul>
 			</div>
 			
+			<!-- Photo gallery tab's content -->
 			<div ng-show="isSetTab(3)">
 				<p ng-hide="photos.length > 0">No photos have been posted for this event yet.</p>
 				<div id="event-detail-photo-containter" ng-show="photos.length > 0">
@@ -90,17 +94,90 @@
 				</div>
 			</div>
 			
+			<!-- Comments tab's content -->
 			<div ng-show="isSetTab(4)" id="event-detail-comment-container">
 				<!-- Event comments list -->
 				<ul class="list-group">
-					<h4>What everyone is saying about {{event.name}}</h4>
+					<h4>Comments about {{event.title}}</h4>
 					<li class="list-group-item" ng-repeat="comment in comments">
 						<blockquote class="comment-block">
-							{{comment.text}}
-
+							{{comment.body}}
 							<cite class="clearfix">-- {{comment.author}}</cite>
 						</blockquote>
+					</li>
+				</ul>
 
+				<!-- Live preview of the comment for the user to see before posting -->
+
+				<!-- form for creating the comment -->
+				<h4>Leave a comment: </h4>
+				<form class="form" name="commentForm" role="form" ng-submit="addComment()" novalidate>
+					
+					<!-- Live preview of the comment -->
+					<label for="event-comment-preview-block">Preview: </label>
+					<blockquote class="comment-preview-block" id="event-comment-preview-block">
+						{{comment.body}}
+					</blockquote>
+
+					<!-- Form entries for creating a comment -->
+					<fieldset class="form-group">
+						<textarea id="textarea-comment" ng-model="comment.body" class="form-control" placeholder="Write a short comment about the event..." title="Comment" required></textarea>
+					</fieldset>
+					<fieldset class="form-group">
+						<input type="submit" class="btn btn-primary pull-right" value="Submit Comment" />
+					</fieldset>
+				</form>
+			</div>
+
+			<!-- Review tab's content -->
+			<!-- TODO: logic for only enabling reviews if it's a past event -->
+			<div ng-show="isSetTab(5)" id="event-detail-review-container">
+				
+				<!-- Event reviews list -->
+				<ul class="list-group">
+					<h4>Reviews for {{event.title}}</h4>
+					<li class="list-group-item" ng-repeat="review in reviews">
+						<blockquote class="review-block">
+							<strong>{{review.stars}} Stars</strong>
+						    <br>
+							{{review.body}}
+							<cite class="clearfix">-- {{review.author}}</cite>
+						</blockquote>
+					</li>
+				</ul>
+
+				<!-- Form for creating the review -->
+				<h4>Leave a review</h4>
+				<form class="form" name="reviewForm" role="form" ng-submit="addReview()" novalidate> <!-- the scope's review object will have its properties set by the form's values -->
+					<!-- Live Preview -->
+					<label for="event-review-preview-block">Preview: </label>
+					<blockquote class="review-preview-block" id="event-review-preview-block">
+						<strong>{{review.stars}} Stars</strong>
+						</ br>
+						{{review.body}}
+					</blockquote>
+					
+					<!-- Review form -->
+					<fieldset class="form-group">
+						<select ng-model="review.stars" class="form-control" ng-options="star for stars in [5, 4, 3, 2, 1]" title="Stars" required></select>
+							<option value="">Rate the Event</option>
+						</select>
+					</fieldset>
+					<fieldset class="form-group">
+						<textarea ng-model="review.body" class="form-control" placehoder="Write a short review of the event..." title="Review" required></textarea>
+					</fieldset>
+					<fieldset>
+						<input type="submit" class="btn btn-primary pull-right" value="Submit Review" />
+					</fieldset>
+				</form>
+			</div>
+
+
+
+
+
+
+			</div>
 
 		</section>
 

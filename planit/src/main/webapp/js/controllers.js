@@ -652,6 +652,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
  */
 planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $routeParams, HTTP_ERRORS) {
     $scope.event = {};
+    var $scope.profile;
 
     $scope.isUserAttending = false;
 
@@ -690,9 +691,9 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
                 if (resp.error) {
                     // Failed to get a user profile.
                 } else {
-                    var profile = resp.result;
-                    for (var i = 0; i < profile.eventsToAttendKeys.length; i++) {
-                        if ($routeParams.websafeEventKey == profile.eventsToAttendKeys[i]) {
+                    $scope.profile = resp.result;
+                    for (var i = 0; i < $scope.profile.eventsToAttendKeys.length; i++) {
+                        if ($routeParams.websafeEventKey == $scope.profile.eventsToAttendKeys[i]) {
                             // The user is attending the event.
                             $scope.alertStatus = 'info';
                             $scope.messages = 'You are attending this event';
@@ -833,7 +834,7 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
     };
 
 
-    ////////////////////// Review creation and generation for an event //////////////
+    ////////////////////// Comment creation and generation for an event //////////////
 
     $scope.comments = [];
     $scope.comment = {};
@@ -855,11 +856,65 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
                     }
                 } else {
                     $scope.alertStatus = 'success';
-                    $scope.comments.push(resp.result);
+                    resp.result.forEach( function (cmt) {
+                        $scope.comments.push(cmt);
+                    });
                 }
             });
         });
     };
+
+    /**
+     * Add a comment to the comment array when a comment is submitted from the form UI
+     * Our comment object will have its proper values set thanks to ng-model in the HTML
+     */
+    $scope.addComment = function () {
+        $scope.comments.push($scope.comment);
+        $scope.comment = {};
+    }
+
+
+    
+    ////////////////////// Review creation and generation for an event //////////////
+
+
+    $scope.reviews = [];
+    $scope.review = {};
+
+    $scope.getEventReviews = function() {
+        $scope.loading = true;
+        gapi.client.planit.getEventReviews( {
+            websafeEventKey: $routeParams.websafeEventKey
+        }).execute( function (resp) {
+            $scope.$apply( function () {
+                $scope.loading = false;
+                if (resp.error) {
+                    $scope.messages = "Failed to find any comments for this event : " + errorMessage;
+                    $scope.alertStatus = "warning";
+                    $log.error($scope.messages);
+                    if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
+                        oauth2Provider.showLoginModal();
+                        return;
+                    }
+                } else {
+                    $scope.alertStatus = 'success';
+                    resp.result.forEach(function (rev) {
+                        $scope.reviews.push(rev);
+                    });
+                }
+            });
+        });
+    };
+
+    /**
+     * Add a review to the reviews array when a review is submitted from the form UI
+     * Our review object will have its proper values set thanks to ng-model in the HTML
+     */
+    $scope.addReview = function () {
+        $scope.reviews.push($scope.review);
+        $scope.review = {}; //reset the object
+    }
+
 
 
 });
