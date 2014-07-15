@@ -869,6 +869,7 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
      * Our comment object will have its proper values set thanks to ng-model in the HTML
      */
     $scope.addComment = function () {
+        $scope.comment.createdOn = Date.now();      // attach the current timestamp to mark the creation time
         $scope.comments.push($scope.comment);
         $scope.comment = {};
     }
@@ -911,6 +912,7 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
      * Our review object will have its proper values set thanks to ng-model in the HTML
      */
     $scope.addReview = function () {
+        $scope.review.createdOn = Date.now();
         $scope.reviews.push($scope.review);
         $scope.review = {}; //reset the object
     }

@@ -102,7 +102,7 @@
 					<li class="list-group-item" ng-repeat="comment in comments">
 						<blockquote class="comment-block">
 							{{comment.body}}
-							<cite class="clearfix">-- {{comment.author}}</cite>
+							<cite class="clearfix">-- {{comment.author}} on {{ comment.createdOn | date }}</cite>
 						</blockquote>
 					</li>
 				</ul>
@@ -111,7 +111,7 @@
 
 				<!-- form for creating the comment -->
 				<h4>Leave a comment: </h4>
-				<form class="form" name="commentForm" role="form" ng-submit="addComment()" novalidate>
+				<form class="form" name="commentForm" role="form" ng-submit="commentForm.$valid && addComment()" novalidate>
 					
 					<!-- Live preview of the comment -->
 					<label for="event-comment-preview-block">Preview: </label>
@@ -141,14 +141,14 @@
 							<strong>{{review.stars}} Stars</strong>
 						    <br>
 							{{review.body}}
-							<cite class="clearfix">-- {{review.author}}</cite>
+							<cite class="clearfix">-- {{review.author}} on {{ review.createdOn | date }}</cite>
 						</blockquote>
 					</li>
 				</ul>
 
 				<!-- Form for creating the review -->
 				<h4>Leave a review</h4>
-				<form class="form" name="reviewForm" role="form" ng-submit="addReview()" novalidate> <!-- the scope's review object will have its properties set by the form's values -->
+				<form class="form" name="reviewForm" role="form" ng-submit="reviewForm.$valid && addReview()" novalidate> <!-- the scope's review object will have its properties set by the form's values -->
 					<!-- Live Preview -->
 					<label for="event-review-preview-block">Preview: </label>
 					<blockquote class="review-preview-block" id="event-review-preview-block">
