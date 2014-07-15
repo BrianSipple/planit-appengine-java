@@ -20,7 +20,7 @@ public class Profile {
 	
 	@Id String userId;
 	
-	private List<String> eventsToAttendKeys = new ArrayList(0);
+	private List<String> eventsToAttendKeys = new ArrayList<String>();
 	
 	
     /**

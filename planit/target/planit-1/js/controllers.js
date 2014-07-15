@@ -259,7 +259,7 @@ planitApp.controllers.controller('CreateEventCtrl',
         		return true;
         	}
         	return /^[\d]+$/.test($scope.event.maxAttendees) && $scope.event.maxAttendees >= 0;
-        }
+        };
 
         /**
          * Tests if the event.startDate and event.endDate are valid.
@@ -273,7 +273,7 @@ planitApp.controllers.controller('CreateEventCtrl',
         		return true;
         	}
         	return $scope.event.startDate <= $scope.event.endDate;
-        }
+        };
 
         /**
          * Tests if the event.startTime and event.endTime are valid.
@@ -287,7 +287,7 @@ planitApp.controllers.controller('CreateEventCtrl',
         		return true;
         	}
         	return $scope.event.startTime <= $scope.event.endTime;
-        }
+        };
 
         /**
          * Tests if $scope.event is valid.
@@ -299,7 +299,7 @@ planitApp.controllers.controller('CreateEventCtrl',
                 $scope.isValidMaxAttendees() &&
                 $scope.isValidDates();
                 //&& $scope.isValidTimes();
-        }
+        };
 
         /**
          * Invokes the event.createEvent API.
@@ -311,7 +311,6 @@ planitApp.controllers.controller('CreateEventCtrl',
         	if (!$scope.isValidEvent(eventForm)) {
         		return;
         	}
-
         	$scope.loading = true;
         	gapi.client.planit.createEvent($scope.event)
         		.execute(function (resp) {
@@ -809,7 +808,7 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
     
     $scope.getAttendeeProfiles = function() {
         $scope.loading = true;
-        gapi.client.planit.getAttendeeProfiles({
+        gapi.client.planit.getEventAttendeeProfiles({
             websafeEventKey: $routeParams.websafeEventKey
         }).execute(function(resp) {
             $scope.$apply(function() {

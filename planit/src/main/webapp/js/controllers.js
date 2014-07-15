@@ -259,7 +259,7 @@ planitApp.controllers.controller('CreateEventCtrl',
         		return true;
         	}
         	return /^[\d]+$/.test($scope.event.maxAttendees) && $scope.event.maxAttendees >= 0;
-        }
+        };
 
         /**
          * Tests if the event.startDate and event.endDate are valid.
@@ -273,7 +273,7 @@ planitApp.controllers.controller('CreateEventCtrl',
         		return true;
         	}
         	return $scope.event.startDate <= $scope.event.endDate;
-        }
+        };
 
         /**
          * Tests if the event.startTime and event.endTime are valid.
@@ -287,7 +287,7 @@ planitApp.controllers.controller('CreateEventCtrl',
         		return true;
         	}
         	return $scope.event.startTime <= $scope.event.endTime;
-        }
+        };
 
         /**
          * Tests if $scope.event is valid.
@@ -299,7 +299,7 @@ planitApp.controllers.controller('CreateEventCtrl',
                 $scope.isValidMaxAttendees() &&
                 $scope.isValidDates();
                 //&& $scope.isValidTimes();
-        }
+        };
 
         /**
          * Invokes the event.createEvent API.
@@ -311,7 +311,6 @@ planitApp.controllers.controller('CreateEventCtrl',
         	if (!$scope.isValidEvent(eventForm)) {
         		return;
         	}
-
         	$scope.loading = true;
         	gapi.client.planit.createEvent($scope.event)
         		.execute(function (resp) {
@@ -703,6 +702,9 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
                 }
             });
         });
+
+        getAttendeeProfiles();
+        getEventComments();
     };
 
 
@@ -795,23 +797,21 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
         $scope.tab = tab;
     };
 
-    $scope.isSet = function(tab) {
+    $scope.isSetTab = function(tab) {
         return $scope.tab === tab;
     };
 
     
-    /**
-     * Get a list of the confirmed attendees for the current event
-     *
-     */
 
-    $scope.attendees = {};
+    //////////////// Get a list of the confirmed attendees for the current event ///////////
+
+    $scope.attendees = [];
     
     $scope.getAttendeeProfiles = function() {
         $scope.loading = true;
-        gapi.client.planit.getAttendeeProfiles({
+        gapi.client.planit.getEventAttendeeProfiles({
             websafeEventKey: $routeParams.websafeEventKey
-        }).execute(function(resp) {
+        }).execute(function (resp) {
             $scope.$apply(function() {
                 $scope.loading = false;
                 if (resp.error) {
@@ -826,7 +826,36 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
                 } else {
                     // we have our list of profiles
                     $scope.alertStatus = 'success';
-                    $scope.attendees = resp.result;
+                    $scope.attendees.push(resp.result);
+                }
+            });
+        });
+    };
+
+
+    ////////////////////// Review creation and generation for an event //////////////
+
+    $scope.comments = [];
+    $scope.comment = {};
+
+    $scope.getEventComments = function() {
+        $scope.loading = true;
+        gapi.client.planit.getEventReviews( {
+            websafeEventKey: $routeParams.websafeEventKey
+        }).execute( function (resp) {
+            $scope.$apply( function () {
+                $scope.loading = false;
+                if (resp.error) {
+                    $scope.messages = "Failed to find any comments for this event : " + errorMessage;
+                    $scope.alertStatus = "warning";
+                    $log.error($scope.messages);
+                    if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
+                        oauth2Provider.showLoginModal();
+                        return;
+                    }
+                } else {
+                    $scope.alertStatus = 'success';
+                    $scope.comments.push(resp.result);
                 }
             });
         });

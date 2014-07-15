@@ -15,8 +15,8 @@
 			<h2>{{event.title}}</h2>
 			<h5>{{event.description}}</h5>
 			<div>
-				<label for="registered">Registered/Open: </label>
-				<span id="registered">{{event.maxAttendees - event.registrationsAvailable}} / {{event.maxAttendees}}</span>
+				<label for="registered">Registered / Open: </label>
+				<span id="registered"> {{event.maxAttendees - event.registrationsAvailable}} / {{event.maxAttendees}}</span>
 			</div>
 			<div>
 				<p><a class="btn btn-primary" ng-hide="isUserAttending" ng-click="registerForEvent()" ng-disabled="loading">Register</a></p>
@@ -50,29 +50,35 @@
 		<section class="tab" ng-init="tab = 1">
 			
 			<ul class="nav nav-pills">
-				<li ng-class="{ active: tab === 1 }">
+				<li ng-class="{ active: isSetTab(1) }">
 					<a href ng-click="setTab(1)">Description</a>
 				</li>
-				<li ng-class="{ active: tab === 2 }">
-					<a href ng-click="setTab(2); getAttendeeProfiles()">Who's Going</a>
+				<li ng-class="{ active: isSetTab(2) }">
+					<a href ng-click="setTab(2);">Who's All Going</a>
 				</li>
-				<li ng-class="{ active: tab === 3 }">
+				<li ng-class="{ active: isSetTab(3) }">
 					<a href ng-click="setTab(3)">Photos</a>
+				</li>
+				<li ng-class="{ active: isSetTab(4) }">
+					<a href ng-click="setTab(4)">Comments</a>
 				</li>
 			</ul>
 
-			<div ng-show="tab === 1">
+			<!-- The content corresponding to our selected tab -->
+			<div ng-show="isSetTab(1)">
 				<h4>Description</h4>
 				<blockquote>{{event.description}}</blockquote>
 			</div>
-			<div ng-show="tab === 2">
+			
+			<div ng-show="isSetTab(2)">
 				<h4>Confirmed attendees</h4>
 				<ul class="list-group"> <!-- TODO: Make this richer -->
 					<li class="list-group-item" ng-repeat="attendee in attendees">{{attendee.name}}</li>
 				</ul>
 			</div>
-			<div ng-show="tab === 3">
-				<p ng-show="photos.length == 0">No photos have been posted for this event yet.</p>
+			
+			<div ng-show="isSetTab(3)">
+				<p ng-hide="photos.length > 0">No photos have been posted for this event yet.</p>
 				<div id="event-detail-photo-containter" ng-show="photos.length > 0">
 					<h4>Photos</h4>
 						<img ng-src="{{photos[0]}}" />
@@ -83,6 +89,18 @@
 						</ul>
 				</div>
 			</div>
+			
+			<div ng-show="isSetTab(4)" id="event-detail-comment-container">
+				<!-- Event comments list -->
+				<ul class="list-group">
+					<h4>What everyone is saying about {{event.name}}</h4>
+					<li class="list-group-item" ng-repeat="comment in comments">
+						<blockquote class="comment-block">
+							{{comment.text}}
+
+							<cite class="clearfix">-- {{comment.author}}</cite>
+						</blockquote>
+
 
 		</section>
 

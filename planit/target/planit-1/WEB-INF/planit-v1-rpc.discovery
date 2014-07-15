@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/Gn8DvcT0tHZJFfqfm7ek-HaLDsM\"",
+ "etag": "\"p_qcyFV0KQVqSB1Aq3pqmPu-2MY/3REjX6zAS1niiDscrCG9fB2Q8jg\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -91,6 +91,12 @@
     "attendees": {
      "type": "integer",
      "format": "int32"
+    },
+    "attendingUserIds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     },
     "categories": {
      "type": "array",
@@ -304,6 +310,18 @@
     }
    }
   },
+  "ProfileCollection": {
+   "id": "ProfileCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "Profile"
+     }
+    }
+   }
+  },
   "ProfileForm": {
    "id": "ProfileForm",
    "type": "object",
@@ -399,6 +417,25 @@
    ],
    "returns": {
     "$ref": "Event"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "planit.getEventAttendeeProfiles": {
+   "id": "planit.getEventAttendeeProfiles",
+   "allowGet": true,
+   "parameters": {
+    "websafeEventKey": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "websafeEventKey"
+   ],
+   "returns": {
+    "$ref": "ProfileCollection"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
