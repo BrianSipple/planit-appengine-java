@@ -5,7 +5,6 @@
  *
  * @type {planitApp|*|{}}
  */
-
 var planitApp = planitApp || {};
 
 
@@ -367,6 +366,8 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     $scope.filters = [
     ];
 
+    $scope.$watch(filters, queryEvents);
+
     $scope.filtereableFields = [
         {enumValue: 'CITY', displayName: 'City'},
         {enumValue: 'CATEGORY', displayName: 'Category'},
@@ -544,8 +545,8 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
             }
         }
         $scope.loading = true;
-        gapi.client.planit.queryEvents(sendFilters).
-            execute(function (resp) {
+        gapi.client.planit.queryEvents(sendFilters)
+            .execute(function (resp) {
                 $scope.$apply(function () {
                     $scope.loading = false;
                     if (resp.error) {
@@ -620,7 +621,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
                     if (resp.error) {
                         // The request has failed.
                         var errorMessage = resp.error.message || '';
-                        $scope.messages = 'Failed to query the conferences to attend : ' + errorMessage;
+                        $scope.messages = 'Failed to query the events to attend : ' + errorMessage;
                         $scope.alertStatus = 'warning';
                         $log.error($scope.messages);
 
@@ -651,8 +652,9 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
  * A controller used for the event detail page.
  */
 planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $routeParams, HTTP_ERRORS) {
+    
     $scope.event = {};
-    var $scope.profile;
+    $scope.profile = {};
 
     $scope.isUserAttending = false;
 
@@ -704,8 +706,8 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
             });
         });
 
-        getAttendeeProfiles();
-        getEventComments();
+        $scope.getAttendeeProfiles();
+        $scope.getEventComments();
     };
 
 

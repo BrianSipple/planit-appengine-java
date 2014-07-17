@@ -5,7 +5,6 @@
  *
  * @type {planitApp|*|{}}
  */
-
 var planitApp = planitApp || {};
 
 
@@ -367,6 +366,8 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     $scope.filters = [
     ];
 
+    $scope.$watch(filters, queryEvents);
+
     $scope.filtereableFields = [
         {enumValue: 'CITY', displayName: 'City'},
         {enumValue: 'CATEGORY', displayName: 'Category'},
@@ -544,8 +545,8 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
             }
         }
         $scope.loading = true;
-        gapi.client.planit.queryEvents(sendFilters).
-            execute(function (resp) {
+        gapi.client.planit.queryEvents(sendFilters)
+            .execute(function (resp) {
                 $scope.$apply(function () {
                     $scope.loading = false;
                     if (resp.error) {
@@ -620,7 +621,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
                     if (resp.error) {
                         // The request has failed.
                         var errorMessage = resp.error.message || '';
-                        $scope.messages = 'Failed to query the conferences to attend : ' + errorMessage;
+                        $scope.messages = 'Failed to query the events to attend : ' + errorMessage;
                         $scope.alertStatus = 'warning';
                         $log.error($scope.messages);
 
@@ -651,7 +652,9 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
  * A controller used for the event detail page.
  */
 planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $routeParams, HTTP_ERRORS) {
+    
     $scope.event = {};
+    $scope.profile = {};
 
     $scope.isUserAttending = false;
 
@@ -690,9 +693,9 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
                 if (resp.error) {
                     // Failed to get a user profile.
                 } else {
-                    var profile = resp.result;
-                    for (var i = 0; i < profile.eventsToAttendKeys.length; i++) {
-                        if ($routeParams.websafeEventKey == profile.eventsToAttendKeys[i]) {
+                    $scope.profile = resp.result;
+                    for (var i = 0; i < $scope.profile.eventsToAttendKeys.length; i++) {
+                        if ($routeParams.websafeEventKey == $scope.profile.eventsToAttendKeys[i]) {
                             // The user is attending the event.
                             $scope.alertStatus = 'info';
                             $scope.messages = 'You are attending this event';
@@ -702,6 +705,9 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
                 }
             });
         });
+
+        $scope.getAttendeeProfiles();
+        $scope.getEventComments();
     };
 
 
@@ -794,23 +800,21 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
         $scope.tab = tab;
     };
 
-    $scope.isSet = function(tab) {
+    $scope.isSetTab = function(tab) {
         return $scope.tab === tab;
     };
 
     
-    /**
-     * Get a list of the confirmed attendees for the current event
-     *
-     */
 
-    $scope.attendees = {};
+    //////////////// Get a list of the confirmed attendees for the current event ///////////
+
+    $scope.attendees = [];
     
     $scope.getAttendeeProfiles = function() {
         $scope.loading = true;
         gapi.client.planit.getEventAttendeeProfiles({
             websafeEventKey: $routeParams.websafeEventKey
-        }).execute(function(resp) {
+        }).execute(function (resp) {
             $scope.$apply(function() {
                 $scope.loading = false;
                 if (resp.error) {
@@ -825,11 +829,96 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
                 } else {
                     // we have our list of profiles
                     $scope.alertStatus = 'success';
-                    $scope.attendees = resp.result;
+                    $scope.attendees.push(resp.result);
                 }
             });
         });
     };
+
+
+    ////////////////////// Comment creation and generation for an event //////////////
+
+    $scope.comments = [];
+    $scope.comment = {};
+
+    $scope.getEventComments = function() {
+        $scope.loading = true;
+        gapi.client.planit.getEventReviews( {
+            websafeEventKey: $routeParams.websafeEventKey
+        }).execute( function (resp) {
+            $scope.$apply( function () {
+                $scope.loading = false;
+                if (resp.error) {
+                    $scope.messages = "Failed to find any comments for this event : " + errorMessage;
+                    $scope.alertStatus = "warning";
+                    $log.error($scope.messages);
+                    if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
+                        oauth2Provider.showLoginModal();
+                        return;
+                    }
+                } else {
+                    $scope.alertStatus = 'success';
+                    resp.result.forEach( function (cmt) {
+                        $scope.comments.push(cmt);
+                    });
+                }
+            });
+        });
+    };
+
+    /**
+     * Add a comment to the comment array when a comment is submitted from the form UI
+     * Our comment object will have its proper values set thanks to ng-model in the HTML
+     */
+    $scope.addComment = function () {
+        $scope.comment.createdOn = Date.now();      // attach the current timestamp to mark the creation time
+        $scope.comments.push($scope.comment);
+        $scope.comment = {};
+    }
+
+
+    
+    ////////////////////// Review creation and generation for an event //////////////
+
+
+    $scope.reviews = [];
+    $scope.review = {};
+
+    $scope.getEventReviews = function() {
+        $scope.loading = true;
+        gapi.client.planit.getEventReviews( {
+            websafeEventKey: $routeParams.websafeEventKey
+        }).execute( function (resp) {
+            $scope.$apply( function () {
+                $scope.loading = false;
+                if (resp.error) {
+                    $scope.messages = "Failed to find any comments for this event : " + errorMessage;
+                    $scope.alertStatus = "warning";
+                    $log.error($scope.messages);
+                    if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
+                        oauth2Provider.showLoginModal();
+                        return;
+                    }
+                } else {
+                    $scope.alertStatus = 'success';
+                    resp.result.forEach(function (rev) {
+                        $scope.reviews.push(rev);
+                    });
+                }
+            });
+        });
+    };
+
+    /**
+     * Add a review to the reviews array when a review is submitted from the form UI
+     * Our review object will have its proper values set thanks to ng-model in the HTML
+     */
+    $scope.addReview = function () {
+        $scope.review.createdOn = Date.now();
+        $scope.reviews.push($scope.review);
+        $scope.review = {}; //reset the object
+    }
+
 
 
 });

@@ -9,6 +9,8 @@
  *
  * @description
  * Root app, which routes and specifies the partial html and controller depending on the url requested.
+ * 
+ * Note one key depenency being our 'planitControllers' module, which is definied in controllers.js
  *
  */
 

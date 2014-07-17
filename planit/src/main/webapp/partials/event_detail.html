@@ -62,6 +62,9 @@
 				<li ng-class="{ active: isSetTab(4) }">
 					<a href ng-click="setTab(4)">Comments</a>
 				</li>
+				<li ng-class="{ active: isSetTab(5) }">
+					<a href ng-click="setTab(5)">Reviews</a>
+				</li>
 			</ul>
 
 			<!-- The content corresponding to our selected tab -->
@@ -82,22 +85,29 @@
 			
 			<!-- Photo gallery tab's content -->
 			<div ng-show="isSetTab(3)">
-				<p ng-hide="photos.length > 0">No photos have been posted for this event yet.</p>
-				<div id="event-detail-photo-containter" ng-show="photos.length > 0">
+				<p ng-hide="event.images.length">No photos have been posted for this event yet.</p>
+				<div id="event-detail-image-containter" ng-show="event.images.length">
 					<h4>Photos</h4>
-						<img ng-src="{{photos[0]}}" />
-						<ul class="list-inline thumbs">
-							<li class="thumbnail" ng-repeat="photo in photos">
-								<img ng-src="{{photo}}" />
-							</li>
-						</ul>
+					<div class="img-wrap">
+						<img ng-src="{{ images[0] }}"/>
+					</div>
+					<ul class="img-thumbnails clearfix">
+						<li class="small-image pull-left thumbnail" ng-repeat="image in event.images">
+							<img ng-src="{{image}}" ng-hide="imgage === images[0]" />
+						</li>
+					</ul>
 				</div>
 			</div>
 			
 			<!-- Comments tab's content -->
 			<div ng-show="isSetTab(4)" id="event-detail-comment-container">
+				
+				<br />
+				<p ng-hide="comments.length">No comments have been left yet. Be the first... </p>
+				<br />
+
 				<!-- Event comments list -->
-				<ul class="list-group">
+				<ul class="list-group" ng-show="comments.length">
 					<h4>Comments about {{event.title}}</h4>
 					<li class="list-group-item" ng-repeat="comment in comments">
 						<blockquote class="comment-block">
@@ -106,8 +116,6 @@
 						</blockquote>
 					</li>
 				</ul>
-
-				<!-- Live preview of the comment for the user to see before posting -->
 
 				<!-- form for creating the comment -->
 				<h4>Leave a comment: </h4>
@@ -133,8 +141,12 @@
 			<!-- TODO: logic for only enabling reviews if it's a past event -->
 			<div ng-show="isSetTab(5)" id="event-detail-review-container">
 				
+				<br />
+				<p ng-hide="reviews.length">No reviews have been left yet! If you went, let everyone know how it was... </p>
+				<br />
+
 				<!-- Event reviews list -->
-				<ul class="list-group">
+				<ul class="list-group" ng-show="reviews.length">
 					<h4>Reviews for {{event.title}}</h4>
 					<li class="list-group-item" ng-repeat="review in reviews">
 						<blockquote class="review-block">
@@ -153,13 +165,13 @@
 					<label for="event-review-preview-block">Preview: </label>
 					<blockquote class="review-preview-block" id="event-review-preview-block">
 						<strong>{{review.stars}} Stars</strong>
-						</ br>
+						<br />
 						{{review.body}}
 					</blockquote>
 					
 					<!-- Review form -->
 					<fieldset class="form-group">
-						<select ng-model="review.stars" class="form-control" ng-options="star for stars in [5, 4, 3, 2, 1]" title="Stars" required></select>
+						<select ng-model="review.stars" class="form-control" ng-options="stars for stars in [5, 4, 3, 2, 1]" title="Stars" required></select>
 							<option value="">Rate the Event</option>
 						</select>
 					</fieldset>
