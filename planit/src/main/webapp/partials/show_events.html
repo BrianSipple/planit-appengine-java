@@ -96,7 +96,7 @@
         </div>
 
         <div ng-hide="selectedTab != 'ALL'" class="col-xs-6 col-sm-4 sidebar-offcanvas" id="sidebar" role="navigation">
-            <button ng-click="addFilter()" class="btn btn-primary">
+            <button ng-click="addFilter(); queryEvents()" class="btn btn-primary">
                 <i class="glyphicon glyphicon-plus"></i> Filter
             </button>
             <button ng-click="clearFilters()" class="btn btn-primary" ng-disabled="filters.length == 0">Clear</button>
