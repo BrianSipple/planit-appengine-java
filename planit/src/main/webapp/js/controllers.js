@@ -366,7 +366,7 @@ planitApp.controllers.controller('ShowEventCtrl', function ($scope, $log, oauth2
     $scope.filters = [
     ];
 
-    $scope.$watch($scope.filters, queryEvents);
+    $scope.$watch($scope.filters, $scope.queryEvents);
 
     $scope.filtereableFields = [
         {enumValue: 'CITY', displayName: 'City'},
