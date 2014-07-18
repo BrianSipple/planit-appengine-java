@@ -1,9 +1,16 @@
-<!-- Indices written at Wed, 16 Jul 2014 07:42:07 CDT -->
+<!-- Indices written at Thu, 17 Jul 2014 18:47:25 CDT -->
 
 <datastore-indexes>
 
     <!-- Used 1 time in query history -->
     <datastore-index kind="Event" ancestor="false" source="auto">
+        <property name="city" direction="asc"/>
+        <property name="title" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="Event" ancestor="false" source="auto">
+        <property name="city" direction="asc"/>
         <property name="city" direction="asc"/>
         <property name="title" direction="asc"/>
     </datastore-index>
