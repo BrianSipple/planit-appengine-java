@@ -850,7 +850,7 @@ planitApp.controllers.controller('EventDetailCtrl', function ($scope, $log, $rou
 
     $scope.getEventComments = function() {
         $scope.loading = true;
-        gapi.client.planit.getEventReviews( {
+        gapi.client.planit.getEventComments( {
             websafeEventKey: $routeParams.websafeEventKey
         }).execute( function (resp) {
             $scope.$apply( function () {

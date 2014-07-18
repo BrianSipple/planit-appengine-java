@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.xml.stream.events.Comment;
+
 import com.appengine.planit.Constants;
 import com.appengine.planit.domain.Announcement;
 import com.appengine.planit.domain.AppEngineUser;
@@ -510,7 +512,7 @@ public class PlanitApi {
 		List<String> eventsToAttendKeyStrings = profile.getEventsToAttendKeys();
 
 		// Make a list of actual Key objects from the Key Strings
-		List<Key<Event>> eventKeys = new ArrayList();
+		List<Key<Event>> eventKeys = new ArrayList<Key<Event>>();
 
 		for (String eventKeyString : eventsToAttendKeyStrings) {
 			eventKeys.add(Key.create(Event.class, eventKeyString));
@@ -541,8 +543,9 @@ public class PlanitApi {
 			path = "event/{websafeEventKey}/getProfiles",
 			httpMethod = HttpMethod.GET
 			)
-	public List<Profile> getEventAttendeeProfiles(
-			@Named("websafeEventKey") final String websafeEventKey) {
+	public Collection<Profile> getEventAttendeeProfiles(
+			@Named("websafeEventKey") final String websafeEventKey,
+			final User user) {
 		
 		// Get the event
 		Key<Event> eventKey = Key.create(websafeEventKey);
@@ -551,13 +554,12 @@ public class PlanitApi {
 		// Get the event's list of Strings for the user ids of those attending
 		List<String> userIds = event.getAttendingUserIds();
 		
-		List<Profile> profileList = new ArrayList<Profile>();
+		Collection<Profile> profileList = new ArrayList<Profile>();
 		
 		// Get the profile objects by using each id as a key
 		for (String userId : userIds) {
 			
-			Key<Profile> profileKey = Key.create(Profile.class, userId);
-			Profile profile = ofy().load().key(profileKey).now();
+			Profile profile = getProfileFromUser(user);
 			profileList.add(profile);
 		}
 		
@@ -641,6 +643,40 @@ public class PlanitApi {
 		}
 		return result;
 	}
+	
+	
+////////////////////////////////// COMMENTS   //////////////////////////////////
+	
+	/*
+	@ApiMethod(
+			name = "getEventComments",
+			path = "comment/{websafeEventKey}",
+			httpMethod = HttpMethod.GET
+			)
+	public Collection<Comment> getEventComments(
+			@Named("websafeEventKey") final String websafeEventKey) {
+		
+		// get the event
+		Key<Event> eventKey = Key.create(Event.class, websafeEventKey);
+		Event event = ofy().load().key(eventKey).now();
+		
+		// get the list of comment keys strings stored for the event
+		List<String> commentKeyStrings = event.getCommentKeyStrings();	
+				
+		// make a list of actual comment keys, then add comments to the collection by loading them from the keys list
+		List<Key<Comment>> commentKeys = new ArrayList<Key<Comment>>();
+		for (String commentKeyString : commentKeyStrings) {
+			commentKeys.add(Key.create(Comment.class, commentKeyString));
+		}
+		
+		Collection<Comment> commentCollection = ofy().load().keys(commentKeys).values();
+		
+		return commentCollection;	
+	}
+	*/
+	
+	
+	
 
 
 	/////////////////////// MEMCACHING METHODS //////////////////
