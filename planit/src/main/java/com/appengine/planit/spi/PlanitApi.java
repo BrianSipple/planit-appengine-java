@@ -14,6 +14,7 @@ import com.appengine.planit.domain.Announcement;
 import com.appengine.planit.domain.AppEngineUser;
 import com.appengine.planit.domain.Event;
 import com.appengine.planit.domain.Profile;
+import com.appengine.planit.form.CommentForm;
 import com.appengine.planit.form.EventForm;
 import com.appengine.planit.form.EventQueryForm;
 import com.appengine.planit.form.ProfileForm;
@@ -216,7 +217,7 @@ public class PlanitApi {
 		});
 		return event;
 	}
-	
+
 	/**
 	 * Get an event by querying on its websafeEventKey
 	 */
@@ -227,19 +228,19 @@ public class PlanitApi {
 			)
 	public Event getEvent( 
 			@Named("websafeEventKey") final String websafeEventKey)
-			throws NotFoundException {
+					throws NotFoundException {
 		Key<Event> eventKey = Key.create(websafeEventKey);
 		Event event = ofy().load().key(eventKey).now();
-		
+
 		if (event == null) {
 			throw new NotFoundException("No event found with key: " + websafeEventKey);
 		}
-		
+
 		return event;
-		
+
 	}
-			
-	
+
+
 
 
 	/**
@@ -261,10 +262,10 @@ public class PlanitApi {
 			httpMethod = HttpMethod.POST
 			)
 	public List<Event> queryEvents(EventQueryForm eventQueryForm) {
-		
+
 		if (eventQueryForm == null) {
 			Iterable<Event> eventsIterable = (Query<Event>) ofy().load().type(Event.class).order("title");
-			
+
 		}
 
 		Iterable<Event> eventsIterable = eventQueryForm.getQuery().list();
@@ -525,8 +526,8 @@ public class PlanitApi {
 		return eventCollection;
 
 	}
-	
-	
+
+
 	/**
 	 * Called by our EventDetailCtrl controller when a user loads an event detail
 	 * page. This will allow user profile objects to be displayed when a user selects
@@ -546,27 +547,27 @@ public class PlanitApi {
 	public Collection<Profile> getEventAttendeeProfiles(
 			@Named("websafeEventKey") final String websafeEventKey,
 			final User user) {
-		
+
 		// Get the event
 		Key<Event> eventKey = Key.create(websafeEventKey);
 		Event event = ofy().load().key(eventKey).now();
-		
+
 		// Get the event's list of Strings for the user ids of those attending
 		List<String> userIds = event.getAttendingUserIds();
-		
+
 		Collection<Profile> profileList = new ArrayList<Profile>();
-		
+
 		// Get the profile objects by using each id as a key
 		for (String userId : userIds) {
-			
+
 			Profile profile = getProfileFromUser(user);
 			profileList.add(profile);
 		}
-		
+
 		return profileList;
 	}
-	
-	
+
+
 
 	/**
 	 * Unregister from the specified Event.
@@ -643,10 +644,10 @@ public class PlanitApi {
 		}
 		return result;
 	}
-	
-	
-////////////////////////////////// COMMENTS   //////////////////////////////////
-	
+
+
+	////////////////////////////////// COMMENTS   //////////////////////////////////
+
 	/*
 	@ApiMethod(
 			name = "getEventComments",
@@ -655,28 +656,61 @@ public class PlanitApi {
 			)
 	public Collection<Comment> getEventComments(
 			@Named("websafeEventKey") final String websafeEventKey) {
-		
+
 		// get the event
 		Key<Event> eventKey = Key.create(Event.class, websafeEventKey);
 		Event event = ofy().load().key(eventKey).now();
-		
+
 		// get the list of comment keys strings stored for the event
 		List<String> commentKeyStrings = event.getCommentKeyStrings();	
-				
+
 		// make a list of actual comment keys, then add comments to the collection by loading them from the keys list
 		List<Key<Comment>> commentKeys = new ArrayList<Key<Comment>>();
 		for (String commentKeyString : commentKeyStrings) {
 			commentKeys.add(Key.create(Comment.class, commentKeyString));
 		}
-		
+
 		Collection<Comment> commentCollection = ofy().load().keys(commentKeys).values();
-		
+
 		return commentCollection;	
 	}
-	*/
-	
-	
-	
+	 */
+
+
+	@ApiMethod(
+			name = "createComment",
+			path = "comment/{websafeEventKey}",
+			httpMethod = HttpMethod.POST
+			)
+	public void createComment(final User user,
+			@Named("webSafeEventKey") final String websafeEventKey,
+			final CommentForm commentForm) throws UnauthorizedException {
+		
+		//get the User id from the user
+		
+		// get the event id from the event key
+		
+		// execute a transaction that creates the comment, and add the comment's Id
+		// to the list of commentId keys in the event
+	}
+
+
+
+
+
+	//////////////////////////////////  REVIEWS  //////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	/////////////////////// MEMCACHING METHODS //////////////////
@@ -735,7 +769,7 @@ public class PlanitApi {
 		}
 		return profile;
 	}
-	
+
 
 	/**
 	 * A small hack for getting the user name... accounting for the fact that 
@@ -763,40 +797,40 @@ public class PlanitApi {
 
 		return userId;
 	}
-	
-    /**
-     * A wrapper class that can embrace a generic result or some kind of exception.
-     *
-     * Use this wrapper class for the return type of objectify transaction.
-     * <pre>
-     * {@code
-     * // The transaction that returns Event object.
-     * TxResult<Event> result = ofy().transact(new Work<TxResult<Event>>() {
-     *     public TxResult<Event> run() {
-     *         // Code here.
-     *         // To throw 404
-     *         return new TxResult<>(new NotFoundException("No such event"));
-     *         // To return an event.
-     *         Event event = somehow.getEvent();
-     *         return new TxResult<>(event);
-     *     }
-     * }
-     * // Actually the NotFoundException will be thrown here.
-     * return result.getResult();
-     * </pre>
-     *
-     * @param <ResultType> The type of the actual return object.
-     */
+
+	/**
+	 * A wrapper class that can embrace a generic result or some kind of exception.
+	 *
+	 * Use this wrapper class for the return type of objectify transaction.
+	 * <pre>
+	 * {@code
+	 * // The transaction that returns Event object.
+	 * TxResult<Event> result = ofy().transact(new Work<TxResult<Event>>() {
+	 *     public TxResult<Event> run() {
+	 *         // Code here.
+	 *         // To throw 404
+	 *         return new TxResult<>(new NotFoundException("No such event"));
+	 *         // To return an event.
+	 *         Event event = somehow.getEvent();
+	 *         return new TxResult<>(event);
+	 *     }
+	 * }
+	 * // Actually the NotFoundException will be thrown here.
+	 * return result.getResult();
+	 * </pre>
+	 *
+	 * @param <ResultType> The type of the actual return object.
+	 */
 	private static class TxResult<ResultType> {
-		
+
 		private ResultType result;
-		
+
 		private Throwable exception;
-		
+
 		private TxResult(ResultType result) {
 			this.result = result;
 		}
-		
+
 		private TxResult(Throwable exception) {
 			if (exception instanceof NotFoundException ||
 					exception instanceof ForbiddenException ||
@@ -806,7 +840,7 @@ public class PlanitApi {
 				throw new IllegalArgumentException("Exception not supported");
 			}
 		}
-		
+
 		private ResultType getResult() throws NotFoundException, ForbiddenException, ConflictException {
 			if (exception instanceof NotFoundException) {
 				throw (NotFoundException) exception;

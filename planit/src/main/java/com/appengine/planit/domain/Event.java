@@ -111,6 +111,20 @@ public class Event {
 	
 	
 	/**
+	 * List of Strings corresponding to the comment IDs of comments left for the event
+	 */
+	@Index
+	private List<String> commentKeyStrings;
+	
+	
+	/**
+	 * List of Strings corresponding to the review IDs of reviews left for the event
+	 */
+	@Index
+	private List<String> reviewKeyStrings;
+	
+	
+	/**
 	 * Current number of registrations avaialble, base upon the maxAttendees and current attendees
 	 */
 	@Index
