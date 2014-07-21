@@ -682,16 +682,53 @@ public class PlanitApi {
 			path = "comment/{websafeEventKey}",
 			httpMethod = HttpMethod.POST
 			)
-	public void createComment(final User user,
+	public Comment createComment(final User user,
 			@Named("webSafeEventKey") final String websafeEventKey,
 			final CommentForm commentForm) throws UnauthorizedException {
 		
+		if (user == null) {
+			throw new UnauthorizedException("Authorization required");
+		}
+		
 		//get the User id from the user
+		String userId = getUserId(user);
+
+		//Create the comment Key as an ancestor to the profile Key
+		Key<Profile> profileKey = Key.create(Profile.class, userId);
+		final Key<Comment> commentKey = ofy().factory().allocateId(profileKey, Comment.class);
+		final long commentId = commentKey.getId();
+				
+		Event event = ofy().transact(new Work<Comment>() {
+
+			@Override
+			public Comment run() {
+				
+					
+					// get the event key
+					final Key<Event> eventKey = Key.create(websafeEventKey);
+					final long eventId = eventKey.getId();
+					
+					Event event = ofy().load().key(eventKey).now();
+
+					if (event == null) {
+						return new WrappedBoolean(false, EVENT_NOT_FOUND_ERROR + websafeEventKey);
+					}
+					
+					Profile profile = getProfileFromUser(user);
+
+					Comment comment = new Comment(commentId, userId, eventId, commentForm);
+					
+					/// if okay
+					event.addToCommentsCreatedIds(commentId)
+					profile.addToCommentsCreatedIds(commentId)
+					
+					ofy().save().entities(comment, profile, event).now();
+
+					return comment;
+			}
+		});
 		
-		// get the event id from the event key
-		
-		// execute a transaction that creates the comment, and add the comment's Id
-		// to the list of commentId keys in the event
+		return comment;
 	}
 
 
