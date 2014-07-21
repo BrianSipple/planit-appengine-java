@@ -698,7 +698,7 @@ public class PlanitApi {
 		final Key<Comment> commentKey = ofy().factory().allocateId(profileKey, Comment.class);
 		final long commentId = commentKey.getId();
 				
-		Event event = ofy().transact(new Work<Comment>() {
+		Comment comment = ofy().transact(new Work<Comment>() {
 
 			@Override
 			public Comment run() {
