@@ -7,11 +7,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.xml.stream.events.Comment;
-
 import com.appengine.planit.Constants;
 import com.appengine.planit.domain.Announcement;
 import com.appengine.planit.domain.AppEngineUser;
+import com.appengine.planit.domain.Comment;
 import com.appengine.planit.domain.Event;
 import com.appengine.planit.domain.Profile;
 import com.appengine.planit.form.CommentForm;
@@ -691,13 +690,18 @@ public class PlanitApi {
 		}
 		
 		//get the User id from the user
-		String userId = getUserId(user);
+		final String userId = getUserId(user);
 
 		//Create the comment Key as an ancestor to the profile Key
 		Key<Profile> profileKey = Key.create(Profile.class, userId);
 		final Key<Comment> commentKey = ofy().factory().allocateId(profileKey, Comment.class);
 		final long commentId = commentKey.getId();
 				
+		/**
+		 * Create and save the comment 
+		 * Add the comment id to the correct event and save the event
+		 * Add the comment id to the correct profile and save the profile
+		 */
 		Comment comment = ofy().transact(new Work<Comment>() {
 
 			@Override
@@ -709,18 +713,14 @@ public class PlanitApi {
 					final long eventId = eventKey.getId();
 					
 					Event event = ofy().load().key(eventKey).now();
-
-					if (event == null) {
-						return new WrappedBoolean(false, EVENT_NOT_FOUND_ERROR + websafeEventKey);
-					}
 					
 					Profile profile = getProfileFromUser(user);
 
 					Comment comment = new Comment(commentId, userId, eventId, commentForm);
 					
 					/// if okay
-					event.addToCommentsCreatedIds(commentId)
-					profile.addToCommentsCreatedIds(commentId)
+					event.addToCommentsLeftKeys(commentKey.toString());
+					profile.addToCommentsCreatedKeys(commentKey.toString());
 					
 					ofy().save().entities(comment, profile, event).now();
 

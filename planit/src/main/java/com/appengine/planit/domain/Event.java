@@ -114,14 +114,14 @@ public class Event {
 	 * List of Strings corresponding to the comment IDs of comments left for the event
 	 */
 	@Index
-	private List<String> commentKeyStrings;
+	private List<String> commentsLeftKeys;
 	
 	
 	/**
 	 * List of Strings corresponding to the review IDs of reviews left for the event
 	 */
 	@Index
-	private List<String> reviewKeyStrings;
+	private List<String> reviewsLeftKeys;
 	
 	
 	/**
@@ -179,6 +179,9 @@ public class Event {
 		updateWithEventForm(eventForm);
 		
 	}
+	
+	
+	////////////////////////////////// GETTERS ///////////////////////////////////
 
 	public Long getId() {
 		return id;
@@ -292,6 +295,8 @@ public class Event {
 	}
 	
 	
+	////////////////////////////////// END GETTERS ///////////////////////////////////
+	
     /**
      * Updates the Event with EventForm.
      * This method is used upon object creation as well as updating existing Event.
@@ -395,6 +400,11 @@ public class Event {
 		stringBuilder.append("Max Attendees: ").append(maxAttendees).append("\n");
 		
 		return stringBuilder.toString();
+		
+	}
+
+	public void addToCommentsLeftKeys(String commentKey) {
+		this.commentsLeftKeys.add(commentKey);
 		
 	}
 

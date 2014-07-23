@@ -22,6 +22,9 @@ public class Profile {
 	
 	private List<String> eventsToAttendKeys = new ArrayList<String>();
 	
+	private List<String> commentsCreatedKeys = new ArrayList<String>();
+	
+	private List<String> reviewsCreatedKeys = new ArrayList<String>();
 	
     /**
      * Public constructor for Profile.
@@ -109,6 +112,11 @@ public class Profile {
 		} else {
 			throw new IllegalArgumentException("Invalid event key: " + eventKey);
 		}
+	}
+
+	public void addToCommentsCreatedKeys(String commentKey) {
+		this.commentsCreatedKeys.add(commentKey);
+		
 	}
 
 	
