@@ -163,7 +163,7 @@ public class PlanitApi {
 			throw new UnauthorizedException("Authorization required");
 		}
 
-		/// load the Profile Entitiy
+		/// load the Profile Entity
 		String userId = getUserId(user);
 		Key<Profile> profileKey = Key.create(Profile.class, userId);
 		Profile profile = (Profile) ofy().load().key(profileKey).now();

@@ -81,6 +81,7 @@ public class ProfileForm {
     	NOT_SPECIFIED,
     	CHEESE,
     	PEPPERONI,
+    	SUPREME,
     	SAUSAGE,
     	VEGGIE,
     	MUSHROOM,

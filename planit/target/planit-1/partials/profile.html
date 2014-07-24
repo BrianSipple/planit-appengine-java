@@ -50,7 +50,7 @@
 						class="label label-warning"
 						ng-show="profile.teeShirtSize != initialProfile.teeShirtSize">
 						Changed</span> <select id="teeShirtSize" ng-model="profile.teeShirtSize"
-						name="teeShirtSize" ng-options="size in teeShirtSize"
+						name="teeShirtSize" ng-options="size for size in teeShirtSizes"
 						class="form-control">
 					</select>
 				</div>
@@ -63,9 +63,9 @@
 						Changed
 					</span>
 					<select id="pizzaTopping" name="pizzaTopping" ng-model="profile.pizzaTopping" 
-							ng-options="topping in pizzaTopping" class="form-control"></select>
+							ng-options="topping for topping in pizzaToppings" class="form-control"></select>
 					<input type="text" name="pizzaTopping" ng-model="profile.pizzaTopping" 
-						   ng-show="profile.pizzaTopping == 'OTHER'" placeholder="Specify other" />
+						   ng-show="provideOtherToppingInput()" placeholder="Specify other" />
 				</div>
 					
 

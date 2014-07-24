@@ -60,16 +60,33 @@ planitApp.controllers.controller('MyProfileCtrl',
         	'XXXL'
         ];
         
-        $scope.pizzaTopping = [
+        $scope.pizzaToppings = [
             
-            'Cheese',
-            'Pepperoni',
-            'Sausage',
-            'Supreme',
-            'Veggie',
-            'Mushroom',
-            'Other',
+            'CHEESE',
+            'PEPPERONI',
+            'SAUSAGE',
+            'SUPREME',
+            'VEGGIE',
+            'MUSHROOM',
+            'OTHER'
         ];
+        
+        $scope.provideOtherToppingInput = function () {
+        	
+        	// Has the topping simply not been defined yet?
+        	if (!angular.isDefined($scope.profile.pizzaTopping)) {
+        		return false;
+        	}
+        	
+        	// Does the topping include any of the values in the list -- with the exception of "OTHER"
+        	for (var i = 0; i < $scope.pizzaToppings.length - 1; i++) {
+        		if ($scope.profile.pizzaTopping == $scope.pizzaToppings[i]) {
+        			return false;
+        		}
+        	}
+
+        	return true;
+        };
 
         /**
          * Initializes the My profile page.
@@ -100,7 +117,7 @@ planitApp.controllers.controller('MyProfileCtrl',
         	};
         	if (!oauth2Provider.signedIn) {
         		var modalInstance = oauth2Provider.showLoginModal();
-        		modalInstance.result.then(retreiveProfileCallback);
+        		modalInstance.result.then(retrieveProfileCallback());
         	} else {
         		retrieveProfileCallback();
         	}

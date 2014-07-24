@@ -67,31 +67,31 @@ public class Profile {
 
 	
 	public String getDisplayName() {
-		return this.displayName;
+		return displayName;
 	}
 
 
 	public String getMainEmail() {
-		return this.mainEmail;
+		return mainEmail;
 	}
 
 
 	public int getAge() {
-		return this.age;
+		return age;
 	}
 
 
 	public TeeShirtSize getTeeShirtSize() {
-		return this.teeShirtSize;
+		return teeShirtSize;
 	}
 
 
 	public String getUserId() {
-		return this.userId;
+		return userId;
 	}
 	
 	public PizzaTopping getPizzaTopping() {
-		return this.pizzaTopping;
+		return pizzaTopping;
 	}
 	
 	public List<String> getEventsToAttendKeys() {

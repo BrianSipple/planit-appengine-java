@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/bUu1iNvzwXsxe8x4FT0U5337kQA\"",
+ "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/0nag9_m2Vt2bCosLVwnnLJi67u4\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -330,9 +330,11 @@
     "OTHER",
     "PEPPERONI",
     "SAUSAGE",
+    "SUPREME",
     "VEGGIE"
    ],
    "enumDescriptions": [
+    "",
     "",
     "",
     "",
