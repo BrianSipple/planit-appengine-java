@@ -17,6 +17,7 @@ import com.appengine.planit.form.CommentForm;
 import com.appengine.planit.form.EventForm;
 import com.appengine.planit.form.EventQueryForm;
 import com.appengine.planit.form.ProfileForm;
+import com.appengine.planit.form.ProfileForm.PizzaTopping;
 import com.appengine.planit.form.ProfileForm.TeeShirtSize;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
@@ -85,6 +86,7 @@ public class PlanitApi {
 		String mainEmail = null;
 		int age = 0;
 		TeeShirtSize teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
+		PizzaTopping pizzaTopping = PizzaTopping.NOT_SPECIFIED;
 
 		// If the user is not logged in, throw an UnauthorizedException
 		if (user == null) {
@@ -99,6 +101,7 @@ public class PlanitApi {
 		teeShirtSize = profileForm.getTeeShirtSize();
 		displayName = profileForm.getDisplayName();
 		age = profileForm.getAge();
+		pizzaTopping = profileForm.getPizzaTopping();
 
 
 		// Attempt to load in the users profile from their userId to determine whether they are 
@@ -113,6 +116,10 @@ public class PlanitApi {
 			if (teeShirtSize == null) {
 				teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
 			}
+			
+			if (pizzaTopping == null) {
+				pizzaTopping = PizzaTopping.NOT_SPECIFIED;
+			}
 
 
 			if (displayName == null) {
@@ -121,12 +128,12 @@ public class PlanitApi {
 
 			// Create a new Profile entity from the
 			// userId, displayName, mainEmail, age, and teeShirtSize
-			profile = new Profile(userId, displayName, mainEmail, age, teeShirtSize);
+			profile = new Profile(userId, displayName, mainEmail, age, teeShirtSize, pizzaTopping);
 
 		} else {
 
 			// If the profile already existed, we update the original one instead
-			profile.update(displayName, age, teeShirtSize);
+			profile.update(displayName, age, teeShirtSize, pizzaTopping);
 		}
 
 		// Save the Profile entity in the datastore
@@ -710,13 +717,13 @@ public class PlanitApi {
 					
 					// get the event key
 					final Key<Event> eventKey = Key.create(websafeEventKey);
-					final long eventId = eventKey.getId();
+					final String eventKeyString = eventKey.toString();
 					
 					Event event = ofy().load().key(eventKey).now();
 					
 					Profile profile = getProfileFromUser(user);
 
-					Comment comment = new Comment(commentId, userId, eventId, commentForm);
+					Comment comment = new Comment(commentId, userId, eventKeyString, commentForm);
 					
 					/// if okay
 					event.addToCommentsLeftKeys(commentKey.toString());
@@ -802,7 +809,11 @@ public class PlanitApi {
 			// Use default displayName and teeShirtSize
 			String email = user.getEmail();
 			profile = new Profile(getUserId(user),
-					extractDefaultDisplayNameFromEmail(email), email, 0, TeeShirtSize.NOT_SPECIFIED);
+								  extractDefaultDisplayNameFromEmail(email), 
+								  email, 
+								  0, 
+								  TeeShirtSize.NOT_SPECIFIED,
+								  PizzaTopping.NOT_SPECIFIED);
 		}
 		return profile;
 	}

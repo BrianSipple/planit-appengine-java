@@ -50,7 +50,7 @@ planitApp.controllers.controller('MyProfileCtrl',
          * Candidates for the teeShirtSize select box.
          * @type {string[]}
          */
-        $scope.teeShirtSize = [
+        $scope.teeShirtSizes = [
         	'XS',
         	'S',
         	'M',
@@ -91,6 +91,7 @@ planitApp.controllers.controller('MyProfileCtrl',
         						$scope.profile.age = response.result.age;
         						$scope.profile.mainEmail = response.result.mainEmail;
         						$scope.profile.teeShirtSize = response.result.teeShirtSize;
+        						$scope.profile.pizzaTopping = response.result.pizzaTopping;
         						$scope.initialProfile = response.result;
         					}
         				});
@@ -136,7 +137,8 @@ planitApp.controllers.controller('MyProfileCtrl',
         						displayName: $scope.profile.displayName,
         						mainEmail: $scope.profile.mainEmail,
         						age: $scope.profile.age,
-        						teeShirtSize: $scope.profile.teeShirtSize
+        						teeShirtSize: $scope.profile.teeShirtSize,
+        						pizzaTopping: $scope.profile.pizzaTopping
         					};
 
         					$log.info($scope.messages + JSON.stringify(resp.result));

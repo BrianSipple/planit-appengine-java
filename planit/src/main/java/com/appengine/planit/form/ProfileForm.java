@@ -23,6 +23,8 @@ public class ProfileForm {
      * T shirt size.
      */
     private TeeShirtSize teeShirtSize;
+    
+    private PizzaTopping pizzaTopping;
 
 
     private ProfileForm () {}
@@ -33,11 +35,13 @@ public class ProfileForm {
      * @param notificationEmail An e-mail address for getting notifications from this system.
      * @param teeShirtSize t-shirt size... because t-shirts
      */
-    public ProfileForm(String displayName, String mainEmail, int age, TeeShirtSize teeShirtSize) {
+    public ProfileForm(String displayName, String mainEmail, int age, 
+    					TeeShirtSize teeShirtSize, PizzaTopping pizzaTopping) {
         this.displayName = displayName;
         this.mainEmail = mainEmail;
         this.age = age;
         this.teeShirtSize = teeShirtSize;
+        this.pizzaTopping = pizzaTopping;
     }
 
 
@@ -68,4 +72,20 @@ public class ProfileForm {
         XXL,
         XXXL
     }
+    
+    public PizzaTopping getPizzaTopping() {
+    	return this.pizzaTopping;
+    }
+    
+    public static enum PizzaTopping {
+    	NOT_SPECIFIED,
+    	CHEESE,
+    	PEPPERONI,
+    	SAUSAGE,
+    	VEGGIE,
+    	MUSHROOM,
+    	OTHER
+    }
+    
+    
 }

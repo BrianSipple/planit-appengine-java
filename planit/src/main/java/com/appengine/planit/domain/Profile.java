@@ -3,6 +3,7 @@ package com.appengine.planit.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.appengine.planit.form.ProfileForm.PizzaTopping;
 import com.appengine.planit.form.ProfileForm.TeeShirtSize;
 import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableList;
 import com.googlecode.objectify.annotation.Cache;
@@ -17,7 +18,7 @@ public class Profile {
 	private String mainEmail;
 	private int age;
 	private TeeShirtSize teeShirtSize;
-	private String pizzaTopping;
+	private PizzaTopping pizzaTopping;
 	
 	@Id String userId;
 	
@@ -35,7 +36,8 @@ public class Profile {
      * @param teeShirtSize The User's tee shirt size
      * 
      */
-	public Profile(String userId, String displayName, String mainEmail, int age, TeeShirtSize teeShirtSize, String pizzaTopping) {
+	public Profile(String userId, String displayName, String mainEmail, int age, 
+					TeeShirtSize teeShirtSize, PizzaTopping pizzaTopping) {
 		this.userId = userId;
 		this.displayName = displayName;
 		this.mainEmail = mainEmail;
@@ -44,7 +46,7 @@ public class Profile {
 		this.pizzaTopping = pizzaTopping;
 	}
 	
-	public void update(String displayName, int age, TeeShirtSize teeShirtSize, String pizzaTopping) {
+	public void update(String displayName, int age, TeeShirtSize teeShirtSize, PizzaTopping pizzaTopping) {
 		if (displayName != null) {
 			this.displayName = displayName;
 		}
@@ -88,7 +90,7 @@ public class Profile {
 		return this.userId;
 	}
 	
-	public String getPizzaTopping() {
+	public PizzaTopping getPizzaTopping() {
 		return this.pizzaTopping;
 	}
 	

@@ -18,7 +18,7 @@ public class Comment {
 	
 	private String userId;
 	
-	private long eventId;
+	private String eventKeyString;
 	
 	private String text;
 	
@@ -28,10 +28,10 @@ public class Comment {
 		
 	}
 	
-	public Comment(final long commentId, final String userId, final long eventId, final CommentForm commentForm) {
+	public Comment(final long commentId, final String userId, final String eventKeyString, final CommentForm commentForm) {
 		Preconditions.checkNotNull(commentForm.getText(), "Some text is required in your comment!");
 		this.commentId = commentId;
-		this.eventId = eventId;
+		this.eventKeyString = eventKeyString;
 		updateWithCommentForm(commentForm);
 	}
 	
@@ -46,8 +46,8 @@ public class Comment {
 		return userId;
 	}
 
-	public String getEventId() {
-		return eventId;
+	public String getEventKeyString() {
+		return eventKeyString;
 	}
 
 	public String getText() {

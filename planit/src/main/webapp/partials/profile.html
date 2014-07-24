@@ -27,7 +27,7 @@
 				</div>
 
 				<div class="form-group"
-					ng-class="{'has-warning': profile.mainEmail != initialProfile.mainEmail">
+					ng-class="{'has-warning': profile.mainEmail != initialProfile.mainEmail}">
 					<label for="mainEmail">Main Email </label> 
 					<span class="label label-warning"
 						ng-show="profile.mainEmail != initialProfile.mainEmail"> Changed</span> 
@@ -36,7 +36,7 @@
 				</div>
 				
 				<div class="form-group"
-					ng-class="{'has-warning': profile.age != initialProfile.age">
+					ng-class="{'has-warning': profile.age != initialProfile.age}">
 					<label for="age">Age </label> 
 					<span class="label label-warning"
 						ng-show="profile.age != initialProfile.age"> Changed</span> 
@@ -62,15 +62,15 @@
 						  ng-show="profile.pizzaTopping != initialProfile.pizzaTopping">
 						Changed
 					</span>
-					<select id="pizzaTopping" ng-model="profile.pizzaTopping" 
+					<select id="pizzaTopping" name="pizzaTopping" ng-model="profile.pizzaTopping" 
 							ng-options="topping in pizzaTopping" class="form-control"></select>
-					<input type="text" ng-model="profile.pizzaTopping" 
-						   ng-show="profile.pizzaTopping == 'Other'" placeholder="Specify other" />
+					<input type="text" name="pizzaTopping" ng-model="profile.pizzaTopping" 
+						   ng-show="profile.pizzaTopping == 'OTHER'" placeholder="Specify other" />
 				</div>
 					
 
 				<button ng-click="saveProfile(profileForm)" class="btn btn-primary"
-					ng-disabled="loading">Update profile</button>
+					ng-disabled="loading || profileForm.$invalid">Update profile</button>
 			</form>
 		</div>
 	</div>

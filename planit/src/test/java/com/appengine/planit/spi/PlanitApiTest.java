@@ -1,28 +1,24 @@
 package com.appengine.planit.spi;
 
 import static com.appengine.planit.service.OfyService.ofy;
-import static org.junit.Assert.*;
-
-import com.appengine.planit.domain.Profile;
-import com.google.api.server.spi.response.UnauthorizedException;
-import com.google.appengine.api.users.User;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-// import com.google.devrel.training.conference.domain.Conference;
-// import com.google.devrel.training.conference.form.ConferenceForm;
-import com.appengine.planit.form.ProfileForm;
-import com.appengine.planit.form.ProfileForm.TeeShirtSize;
-import com.googlecode.objectify.Key;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.appengine.planit.domain.Profile;
+// import com.google.devrel.training.conference.domain.Conference;
+// import com.google.devrel.training.conference.form.ConferenceForm;
+import com.appengine.planit.form.ProfileForm;
+import com.appengine.planit.form.ProfileForm.PizzaTopping;
+import com.appengine.planit.form.ProfileForm.TeeShirtSize;
+import com.google.api.server.spi.response.UnauthorizedException;
+import com.google.appengine.api.users.User;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.googlecode.objectify.Key;
 
 /**
  * Tests for ConferenceApi API methods.
@@ -38,6 +34,8 @@ public class PlanitApiTest {
     private static final String DISPLAY_NAME = "Your Name Here";
     
     private static final int AGE = 0;
+    
+    private static final PizzaTopping PIZZA_TOPPING = PizzaTopping.VEGGIE;
 
     private static final String NAME = "GCP Live";
 
@@ -87,7 +85,7 @@ public class PlanitApiTest {
     public void testSaveProfile() throws Exception {
         // Save the profile for the first time.
         Profile profile = planitApi.saveProfile(
-                user, new ProfileForm(DISPLAY_NAME, EMAIL, AGE, TEE_SHIRT_SIZE));
+                user, new ProfileForm(DISPLAY_NAME, EMAIL, AGE, TEE_SHIRT_SIZE, PIZZA_TOPPING));
         // Check the return value first.
         assertEquals(USER_ID, profile.getUserId());
         assertEquals(EMAIL, profile.getMainEmail());
@@ -106,7 +104,7 @@ public class PlanitApiTest {
     @Test
     public void testSaveProfileWithNull() throws Exception {
         // Save the profile for the first time with null values.
-        Profile profile = planitApi.saveProfile(user, new ProfileForm(null, null, 0, null));
+        Profile profile = planitApi.saveProfile(user, new ProfileForm(null, null, 0, null, null));
         String displayName = EMAIL.substring(0, EMAIL.indexOf("@"));
         // Check the return value first.
         assertEquals(USER_ID, profile.getUserId());
@@ -125,7 +123,7 @@ public class PlanitApiTest {
 
     @Test
     public void testGetProfile() throws Exception {
-        planitApi.saveProfile(user, new ProfileForm(DISPLAY_NAME, EMAIL, AGE, TEE_SHIRT_SIZE));
+        planitApi.saveProfile(user, new ProfileForm(DISPLAY_NAME, EMAIL, AGE, TEE_SHIRT_SIZE, PIZZA_TOPPING));
         // Fetch the Profile via the API.
         Profile profile = planitApi.getProfile(user);
         assertEquals(USER_ID, profile.getUserId());
@@ -138,7 +136,7 @@ public class PlanitApiTest {
     @Test
     public void testUpdateProfile() throws Exception {
         // Save for the first time.
-        planitApi.saveProfile(user, new ProfileForm(DISPLAY_NAME, EMAIL, AGE, TEE_SHIRT_SIZE));
+        planitApi.saveProfile(user, new ProfileForm(DISPLAY_NAME, EMAIL, AGE, TEE_SHIRT_SIZE, PIZZA_TOPPING));
         Profile profile = ofy().load().key(Key.create(Profile.class, user.getUserId())).now();
         assertEquals(USER_ID, profile.getUserId());
         assertEquals(EMAIL, profile.getMainEmail());
@@ -149,7 +147,8 @@ public class PlanitApiTest {
         String newDisplayName = "New Name";
         TeeShirtSize newTeeShirtSize = TeeShirtSize.L;
         int newAge = 22;
-        planitApi.saveProfile(user, new ProfileForm(newDisplayName, EMAIL, newAge, newTeeShirtSize));
+        PizzaTopping newPizzaTopping = PizzaTopping.MUSHROOM;
+        planitApi.saveProfile(user, new ProfileForm(newDisplayName, EMAIL, newAge, newTeeShirtSize, newPizzaTopping));
         profile = ofy().load().key(Key.create(Profile.class, user.getUserId())).now();
         assertEquals(USER_ID, profile.getUserId());
         assertEquals(EMAIL, profile.getMainEmail());
@@ -160,9 +159,9 @@ public class PlanitApiTest {
 
     @Test
     public void testUpdateProfileWithNulls() throws Exception {
-        planitApi.saveProfile(user, new ProfileForm(DISPLAY_NAME, EMAIL, AGE, TEE_SHIRT_SIZE));
+        planitApi.saveProfile(user, new ProfileForm(DISPLAY_NAME, EMAIL, AGE, TEE_SHIRT_SIZE, PIZZA_TOPPING));
         // Update the Profile with null values.
-        Profile profile = planitApi.saveProfile(user, new ProfileForm(null, null, 0, null));
+        Profile profile = planitApi.saveProfile(user, new ProfileForm(null, null, 0, null, null));
         // Expected behavior is that the existing properties do not get overwritten
 
         // Check the return value first.
@@ -177,6 +176,7 @@ public class PlanitApiTest {
         assertEquals(EMAIL, profile.getMainEmail());
         assertEquals(TEE_SHIRT_SIZE, profile.getTeeShirtSize());
         assertEquals(DISPLAY_NAME, profile.getDisplayName());
+        assertEquals(PIZZA_TOPPING, profile.getPizzaTopping());
     }
 
 

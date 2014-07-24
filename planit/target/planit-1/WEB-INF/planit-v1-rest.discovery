@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/3REjX6zAS1niiDscrCG9fB2Q8jg\"",
+ "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/bUu1iNvzwXsxe8x4FT0U5337kQA\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -76,6 +76,42 @@
    "type": "object",
    "properties": {
     "message": {
+     "type": "string"
+    }
+   }
+  },
+  "Comment": {
+   "id": "Comment",
+   "type": "object",
+   "properties": {
+    "commentId": {
+     "type": "string",
+     "format": "int64"
+    },
+    "createdDate": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "eventKeyString": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string"
+    },
+    "userId": {
+     "type": "string"
+    }
+   }
+  },
+  "CommentForm": {
+   "id": "CommentForm",
+   "type": "object",
+   "properties": {
+    "createdDate": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "text": {
      "type": "string"
     }
    }
@@ -284,6 +320,28 @@
     ""
    ]
   },
+  "PizzaTopping": {
+   "id": "PizzaTopping",
+   "type": "string",
+   "enum": [
+    "CHEESE",
+    "MUSHROOM",
+    "NOT_SPECIFIED",
+    "OTHER",
+    "PEPPERONI",
+    "SAUSAGE",
+    "VEGGIE"
+   ],
+   "enumDescriptions": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ]
+  },
   "Profile": {
    "id": "Profile",
    "type": "object",
@@ -303,6 +361,9 @@
     },
     "mainEmail": {
      "type": "string"
+    },
+    "pizzaTopping": {
+     "$ref": "PizzaTopping"
     },
     "teeShirtSize": {
      "$ref": "TeeShirtSize"
@@ -334,6 +395,9 @@
     },
     "displayName": {
      "type": "string"
+    },
+    "pizzaTopping": {
+     "$ref": "PizzaTopping"
     },
     "teeShirtSize": {
      "$ref": "TeeShirtSize"
@@ -378,6 +442,32 @@
   }
  },
  "methods": {
+  "createComment": {
+   "id": "planit.createComment",
+   "path": "comment/{websafeEventKey}",
+   "httpMethod": "POST",
+   "parameters": {
+    "webSafeEventKey": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "websafeEventKey",
+    "webSafeEventKey"
+   ],
+   "request": {
+    "$ref": "CommentForm",
+    "parameterName": "resource"
+   },
+   "response": {
+    "$ref": "Comment"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "createEvent": {
    "id": "planit.createEvent",
    "path": "event",

@@ -123,7 +123,7 @@ public class EventTest {
 	@Test
 	public void getOrganizerDisplayName() throws Exception {
 		String displayName = "Eric Schmidt";
-		Profile profile = new Profile(ORGANIZER_USER_ID, displayName, "", 59, null);
+		Profile profile = new Profile(ORGANIZER_USER_ID, displayName, "", 59, null, null);
 		ofy().save().entity(profile).now();
 		Event event = new Event(ID, ORGANIZER_USER_ID, eventForm);
 		assertEquals(displayName, event.getOrganizerDisplayName());
