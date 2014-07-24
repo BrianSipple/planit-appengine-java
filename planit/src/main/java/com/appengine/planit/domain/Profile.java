@@ -13,10 +13,11 @@ import com.googlecode.objectify.annotation.Id;
 @Cache
 public class Profile {
 	
-	String displayName;
-	String mainEmail;
-	int age;
-	TeeShirtSize teeShirtSize;
+	private String displayName;
+	private String mainEmail;
+	private int age;
+	private TeeShirtSize teeShirtSize;
+	private String pizzaTopping;
 	
 	@Id String userId;
 	
@@ -34,15 +35,16 @@ public class Profile {
      * @param teeShirtSize The User's tee shirt size
      * 
      */
-	public Profile(String userId, String displayName, String mainEmail, int age, TeeShirtSize teeShirtSize) {
+	public Profile(String userId, String displayName, String mainEmail, int age, TeeShirtSize teeShirtSize, String pizzaTopping) {
 		this.userId = userId;
 		this.displayName = displayName;
 		this.mainEmail = mainEmail;
 		this.age = age;
 		this.teeShirtSize = teeShirtSize;
+		this.pizzaTopping = pizzaTopping;
 	}
 	
-	public void update(String displayName, int age, TeeShirtSize teeShirtSize) {
+	public void update(String displayName, int age, TeeShirtSize teeShirtSize, String pizzaTopping) {
 		if (displayName != null) {
 			this.displayName = displayName;
 		}
@@ -54,6 +56,10 @@ public class Profile {
 		
 		if (teeShirtSize != null) {
 			this.teeShirtSize = teeShirtSize;
+		}
+		
+		if (pizzaTopping != null) {
+			this.pizzaTopping = pizzaTopping;
 		}
 	}
 
@@ -80,6 +86,10 @@ public class Profile {
 
 	public String getUserId() {
 		return this.userId;
+	}
+	
+	public String getPizzaTopping() {
+		return this.pizzaTopping;
 	}
 	
 	public List<String> getEventsToAttendKeys() {

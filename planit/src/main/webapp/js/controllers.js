@@ -59,6 +59,17 @@ planitApp.controllers.controller('MyProfileCtrl',
         	'XXL',
         	'XXXL'
         ];
+        
+        $scope.pizzaTopping = [
+            
+            'Cheese',
+            'Pepperoni',
+            'Sausage',
+            'Supreme',
+            'Veggie',
+            'Mushroom',
+            'Other',
+        ];
 
         /**
          * Initializes the My profile page.
