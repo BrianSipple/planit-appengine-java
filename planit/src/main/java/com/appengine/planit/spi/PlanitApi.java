@@ -700,7 +700,7 @@ public class PlanitApi {
 		final String userId = getUserId(user);
 
 		//Create the comment Key as an ancestor to the profile Key
-		Key<Profile> profileKey = Key.create(Profile.class, userId);
+		final Key<Profile> profileKey = Key.create(Profile.class, userId);
 		final Key<Comment> commentKey = ofy().factory().allocateId(profileKey, Comment.class);
 		final long commentId = commentKey.getId();
 				
@@ -714,20 +714,24 @@ public class PlanitApi {
 			@Override
 			public Comment run() {
 				
-					
-					// get the event key
+					// get the event key and set it to a String
 					final Key<Event> eventKey = Key.create(websafeEventKey);
 					final String eventKeyString = eventKey.toString();
 					
-					Event event = ofy().load().key(eventKey).now();
+					// set the profile key to a String
+					final String profileKeyString = profileKey.toString();
 					
+					// set the comment Key as a String
+					final String commentKeyString = commentKey.toString();
+					
+					// get the involved entities
+					Event event = ofy().load().key(eventKey).now();
 					Profile profile = getProfileFromUser(user);
-
 					Comment comment = new Comment(commentId, userId, eventKeyString, commentForm);
 					
-					/// if okay
-					event.addToCommentsLeftKeys(commentKey.toString());
-					profile.addToCommentsCreatedKeys(commentKey.toString());
+					/// all the right keys in all the right places...
+					event.addToCommentsLeftKeys(commentKeyString);
+					profile.addToCommentsCreatedKeys(commentKeyString);
 					
 					ofy().save().entities(comment, profile, event).now();
 
