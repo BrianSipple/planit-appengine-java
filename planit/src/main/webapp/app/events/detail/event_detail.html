@@ -1,0 +1,202 @@
+<div ng-controller="EventDetailCtrl">
+
+	<div class="row">
+		<div class="col-lg-12">
+			<div id="messages" class="alert alert-{{alertStatus}}" ng-show="messages">
+				<span ng-bind="messages"></span>
+				<i class="dismiss-messages pull-right glyphicon-remove" ng-click="messages = ''" ng-show="messages"></i>
+			</div>
+			<img class="spinner" src="/img/ajax-loader.gif" ng-show="loading" />
+		</div>
+	</div>
+
+	<div class="row" ng-init="init()">
+		<div class="well well-sm">
+			<h2>{{event.title}}</h2>
+			<h5>{{event.description}}</h5>
+			<div>
+				<label for="registered">Registered / Open: </label>
+				<span id="registered"> {{event.maxAttendees - event.registrationsAvailable}} / {{event.maxAttendees}}</span>
+			</div>
+			<div>
+				<p><a class="btn btn-primary" ng-hide="isUserAttending" ng-click="registerForEvent()" ng-disabled="loading">Register</a></p>
+				<p><a class="btn btn-primary" ng-show="isUserAttending" ng-click="unregisterFromEvent()" ng-disabled="loading">Unregister</a></p>
+			</div>
+
+			<form class="form" novalidate role="form">
+				<fieldset>
+					<div>
+						<label for="city">City: </label>
+						<span id="city">{{event.city}}</span>
+					</div>
+					<div>
+						<label for="categories">Categories: </label>
+						<span id="categories">
+							<span ng-repeat="category in event.categories" class="label label-primary label-separated">{{category}}</span>
+						</span>
+					</div>
+					<div>
+						<label for="startDate">Start Date: </label>
+						<span id="city">{{event.startDate | date:'dd-MMMM-yyyy'}}</span>
+					</div>
+					<div>
+						<label for="endDate">End Date: </label>
+						<span id="endDate">{{event.endDate | date:'dd-MMMM-yyyy'}}</span>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+		
+		<section class="tab" ng-init="tab = 1">
+			
+			<ul class="nav nav-pills">
+				<li ng-class="{ active: isSetTab(1) }">
+					<a href ng-click="setTab(1)">Description</a>
+				</li>
+				<li ng-class="{ active: isSetTab(2) }">
+					<a href ng-click="setTab(2);">Who's All Going</a>
+				</li>
+				<li ng-class="{ active: isSetTab(3) }">
+					<a href ng-click="setTab(3)">Photos</a>
+				</li>
+				<li ng-class="{ active: isSetTab(4) }">
+					<a href ng-click="setTab(4)">Comments</a>
+				</li>
+				<li ng-class="{ active: isSetTab(5) }">
+					<a href ng-click="setTab(5)">Reviews</a>
+				</li>
+			</ul>
+
+			<!-- The content corresponding to our selected tab -->
+
+			<!-- event description tab's content -->
+			<div ng-show="isSetTab(1)">
+				<h4>Description</h4>
+				<blockquote>{{event.description}}</blockquote>
+			</div>
+			
+			<!-- List of attendees tab's content -->
+			<div ng-show="isSetTab(2)">
+				<h4>Confirmed attendees</h4>
+				<ul class="list-group"> <!-- TODO: Make this richer -->
+					<li class="list-group-item" ng-repeat="attendee in attendees">{{attendee.name}}</li>
+				</ul>
+			</div>
+			
+			<!-- Photo gallery tab's content -->
+			<div ng-show="isSetTab(3)">
+				<p ng-hide="event.images.length">No photos have been posted for this event yet.</p>
+				<div id="event-detail-image-containter" ng-show="event.images.length">
+					<h4>Photos</h4>
+					<div class="img-wrap">
+						<img ng-src="{{ images[0] }}"/>
+					</div>
+					<ul class="img-thumbnails clearfix">
+						<li class="small-image pull-left thumbnail" ng-repeat="image in event.images">
+							<img ng-src="{{image}}" ng-hide="imgage === images[0]" />
+						</li>
+					</ul>
+				</div>
+			</div>
+			
+			<!-- Comments tab's content -->
+			<div ng-show="isSetTab(4)" id="event-detail-comment-container">
+				
+				<br />
+				<p ng-hide="comments.length">No comments have been left yet. Be the first... </p>
+				<br />
+
+				<!-- Event comments list -->
+				<ul class="list-group" ng-show="comments.length">
+					<h4>Comments about {{event.title}}</h4>
+					<li class="list-group-item" ng-repeat="comment in comments">
+						<blockquote class="comment-block">
+							{{comment.body}}
+							<cite class="clearfix">-- {{comment.author}} on {{ comment.createdOn | date }}</cite>
+						</blockquote>
+					</li>
+				</ul>
+
+				<!-- form for creating the comment -->
+				<h4>Leave a comment: </h4>
+				<form class="form" name="commentForm" role="form" ng-submit="commentForm.$valid && addComment()" novalidate>
+					
+					<!-- Live preview of the comment -->
+					<label for="event-comment-preview-block">Preview: </label>
+					<blockquote class="comment-preview-block" id="event-comment-preview-block">
+						{{comment.body}}
+					</blockquote>
+
+					<!-- Form entries for creating a comment -->
+					<fieldset class="form-group">
+						<textarea id="textarea-comment" ng-model="comment.body" class="form-control" placeholder="Write a short comment about the event..." title="Comment" required></textarea>
+					</fieldset>
+					<fieldset class="form-group">
+						<input type="submit" class="btn btn-primary pull-right" value="Submit Comment" />
+					</fieldset>
+				</form>
+			</div>
+
+			<!-- Review tab's content -->
+			<!-- TODO: logic for only enabling reviews if it's a past event -->
+			<div ng-show="isSetTab(5)" id="event-detail-review-container">
+				
+				<br />
+				<p ng-hide="reviews.length">No reviews have been left yet! If you went, let everyone know how it was... </p>
+				<br />
+
+				<!-- Event reviews list -->
+				<ul class="list-group" ng-show="reviews.length">
+					<h4>Reviews for {{event.title}}</h4>
+					<li class="list-group-item" ng-repeat="review in reviews">
+						<blockquote class="review-block">
+							<strong>{{review.stars}} Stars</strong>
+						    <br>
+							{{review.body}}
+							<cite class="clearfix">-- {{review.author}} on {{ review.createdOn | date }}</cite>
+						</blockquote>
+					</li>
+				</ul>
+
+				<!-- Form for creating the review -->
+				<h4>Leave a review</h4>
+				<form class="form" name="reviewForm" role="form" ng-submit="reviewForm.$valid && addReview()" novalidate> <!-- the scope's review object will have its properties set by the form's values -->
+					<!-- Live Preview -->
+					<label for="event-review-preview-block">Preview: </label>
+					<blockquote class="review-preview-block" id="event-review-preview-block">
+						<strong>{{review.stars}} Stars</strong>
+						<br />
+						{{review.body}}
+					</blockquote>
+					
+					<!-- Review form -->
+					<fieldset class="form-group">
+						<select ng-model="review.stars" class="form-control" ng-options="stars for stars in [5, 4, 3, 2, 1]" title="Stars" required></select>
+							<option value="">Rate the Event</option>
+						</select>
+					</fieldset>
+					<fieldset class="form-group">
+						<textarea ng-model="review.body" class="form-control" placehoder="Write a short review of the event..." title="Review" required></textarea>
+					</fieldset>
+					<fieldset>
+						<input type="submit" class="btn btn-primary pull-right" value="Submit Review" />
+					</fieldset>
+				</form>
+			</div>
+
+
+
+
+
+
+			</div>
+
+		</section>
+
+	</div>
+</div>
+
+
+
+
+

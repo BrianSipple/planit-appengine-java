@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/0nag9_m2Vt2bCosLVwnnLJi67u4\"",
+ "etag": "\"MKGA2miAJpVGF7yQTQhsoDXpye8/tIhE8v13E4zjB2zVpX1sLBL-F-I\"",
  "discoveryVersion": "v1",
  "id": "planit:v1",
  "name": "planit",
@@ -93,10 +93,10 @@
     "eventKeyString": {
      "type": "string"
     },
-    "text": {
+    "profileKeyString": {
      "type": "string"
     },
-    "userId": {
+    "text": {
      "type": "string"
     }
    }

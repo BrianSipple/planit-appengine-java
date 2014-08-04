@@ -1,0 +1,134 @@
+<div ng-controller="CreateEventCtrl">
+	
+	<div class="row">
+		<div class="col-lg-12">
+			<div id="messages" class="alert alert={{alertStatus}}" ng-show="messages">
+				<span ng-bind="messages"></span>
+				<i class="dismiss-messages pull-right glyphicon glyphicon-remove" ng-click="messages = ''" ng-show="messages"></i>
+			</div>
+			<img class="spinner" src="/img/ajax-loader.gif" ng-show="loading" />
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-8">
+			<h3>Create an Event</h3>
+
+			<form name="eventForm" novalidate role="form">
+
+				<div class="form-group">
+					<label for="title">Title <span class="required">*</span></label>
+					<span class="label label-danger"
+						ng-show="eventForm.title.$error.required">Required!</span>
+					<input id="title" type="text" name="title" ng-model="event.title" class="form-control" ng-required="true" />
+				</div>
+				
+
+				<div class="form-group" ng-controller="DatepickerCtrl">
+					<label for="startDate">Start Date <span class="required">*</span></label>
+					<span class="label label-danger"
+						ng-show="eventForm.startDate.$error.required">Required!</span>
+					<p class="input-group">
+						<input id="startDate" type="text" class="form-control" 
+							datepicker-popup="{{format}}" ng-model="event.startDate" 
+							is-opened="opened" datepicker-options="dateOptions" 
+							close-text="Close" />
+						<span class="input-group-btn">
+							<button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						</span>
+					</p>
+				</div>
+
+				<div class="form-group" ng-controller="DatepickerCtrl">
+					<label for="endDate">End Date <span class="required">*</span></label>
+					<span class="label label-danger"
+						ng-show="eventForm.endDate.$error.required">Required!</span>
+					<span class="label label-danger"
+						ng-show="!isValidDate()">End Date must be later or equal to Start Date!</span>
+					<p class="input-group">
+						<input id="endDate" type="text" class="form-control" 
+							datepicker-popup="{{format}}" ng-model="event.endDate" 
+							is-opened="opened" datepicker-options="dateOptions" 
+							close-text="Close" />
+						<span class="input-group-btn">
+							<button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						</span>
+					</p>
+				</div>
+
+				<div class="form-group">
+					<label for="description">Description </label>
+					<textarea id="description" type="text" name="description" ng-model="event.description" class="form-control"></textarea>
+				</div>
+
+				<div class="form-group">
+					<label for="categories">Categories </label>
+					<select id="categories" ng-model="event.categories" name="categories"
+									ng-options="category for category in categories" class="form-control" multiple>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="maxAttendees">Max Attendees </label>
+					<span class="label label-danger"
+						ng-show="!isValidMaxAttendees()">Must be an integer!</span>
+						<!-- The input type is text, as the event.maxAttendees start as undefined, hence isValidMaxAttendees will be true when input type is number -->
+					<input id="maxAttendees" type="text" name="maxAttendees" ng-model="event.maxAttendees" class="form-control" />
+				</div>
+
+				<div class="form-group">
+					<label for="address1">Address (Line 1)</label>
+					<input type="text" id="address1" name="address1" ng-model="event.address1"
+						   class="form-control"></input>
+				</div>
+
+				<div class="form-group">
+					<label for="address2">Address (Line 2)</label>
+					<input type="text" id="address2" name="address2" ng-model="event.address2"
+						   class="form-control"></input>
+				</div>
+				
+				<div class="form-group">
+					<label for="city">City <span class="required">*</span></label>
+					<span class="label label-danger"
+						ng-show="eventForm.city.$error.required">Required!</span>
+					<input id="city" type="text" name="city" ng-model="event.city" class="form-control" ng-required="true" />
+				</div>
+
+				<div class="form-group">
+					<label for="state">State (US only)</label>
+					<select id="state" name="state" ng-model="event.state" class="form-control"
+							ng-options="state for state in states"></select>
+				</div>
+
+				<div class="form-group">
+					<label for="zip">Zip Code (US only)</label>
+					<input type="integer" id="zip" name="zip" ng-model="event.zip"
+						   class="form-control"></input>
+				</div>
+
+				
+				<button ng-click="createEvent(eventForm)" class="btn btn-primary"
+					ng-disabled="!isValidEvent(eventForm) || loading">Create
+				</button>
+			</form>
+		</div>
+	</div>
+</div>
+				 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
